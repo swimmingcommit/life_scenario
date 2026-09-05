@@ -546,13 +546,14 @@ async function downloadStoryCard() {
   ctx.fillText('📌 2056년, 내 인생은', 135, storyBoxY + 66);
   ctx.restore();
 
-  ctx.font = "700 28px 'HG꼬딕씨', 'Pretendard', sans-serif";
+  // 타임라인 텍스트 (왼쪽 정렬 명시)
+  ctx.textAlign = 'left';
+  ctx.font = "700 26px 'HG꼬딕씨', 'Pretendard', sans-serif";
   ctx.fillStyle = '#2d3436';
   
-  let textY = storyBoxY + 140;
+  let textY = storyBoxY + 130;
   result.story.forEach(line => {
-    wrapText(ctx, line, 125, textY, 810, 42);
-    textY += 78;
+    textY = wrapText(ctx, line, 125, textY, 810, 38) + 28;
   });
 
   // H. 조언/명언 말풍선 박스
@@ -679,6 +680,7 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
     }
   }
   ctx.fillText(line, x, y);
+  return y;
 }
 
 // 쉼표(,) 및 마침표(.) 기준 줄바꿈 헬퍼
