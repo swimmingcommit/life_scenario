@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>내 인생 우상향? 우하향? | 인생 떡상 & 나락 테스트</title>
+  
+  <!-- SEO & 메타 태그 -->
+  <meta name="description" content="사소한 선택 하나가 불러오는 기상천외한 나비효과! 7단계 극단적 밸런스 게임을 통해 내 인생 우상향 떡상 그래프와 우하향 나락 트리를 확인하세요.">
+  <meta name="keywords" content="심리테스트, 밸런스게임, 인생나락테스트, 인생떡상테스트, 인생그래프, 인스타스토리공유, MBTI">
+  <meta property="og:title" content="인생 떡상 & 나락 7단계 시나리오 테스트">
+  <meta property="og:description" content="사소한 일상이 만드는 끔찍한 나비효과 📉 내 인생 그래프를 확인해보세요!">
+  <meta property="og:type" content="website">
+
+  <!-- 웹폰트: Pretendard -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+  
+  <!-- 스타일시트 -->
+  <link rel="stylesheet" href="style.css?v=20260905_8">
+</head>
+<body class="theme-narak">
+
+  <!-- 메인 모바일 앱 컨테이너 -->
+  <main class="app-container" id="appContainer">
+    
+    <!-- ==========================================
+         0. 모드 선택 화면 (나락 vs 떡상)
+         ========================================== -->
+    <section id="screenModeSelect" class="screen active">
+      <!-- 대문창 상단 띠 배너 -->
+      <a href="https://goo.gle/koreaseoul" target="_blank" rel="noopener noreferrer" class="top-ticker-banner" id="homeTopBanner">
+        <span class="ticker-text">🚨 대학생 인생 치트키: 구글 AI Plus 혜택 확인</span>
+        <span class="ticker-arrow">➔</span>
+      </a>
+
+      <div class="mode-select-content">
+        <div class="brand-badge">
+          <span>⚡</span>
+          <span>내 인생 예고편</span>
+        </div>
+        
+        <h1 class="hero-title">
+          오늘 나의 사소한 선택,<br>떡상일까? 나락일까?
+        </h1>
+        
+        <p class="hero-desc">
+          순간의 선택이 평생을 좌우한다.<br>
+          당신의 30년 뒤 인생은?
+        </p>
+
+        <div class="mode-cards-grid">
+          <!-- 나락 모드 버튼 -->
+          <div class="mode-card narak" id="btnModeNarak" onclick="selectMode('narak')" role="button" tabindex="0">
+            <div class="mode-card-icon">📉</div>
+            <div class="mode-card-info">
+              <h3>인생 나락 시나리오</h3>
+            </div>
+          </div>
+
+          <!-- 떡상 모드 버튼 -->
+          <div class="mode-card tteoksang" id="btnModeTteoksang" onclick="selectMode('tteoksang')" role="button" tabindex="0">
+            <div class="mode-card-icon">📈</div>
+            <div class="mode-card-info">
+              <h3>인생 떡상 시나리오</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         1. 모드별 인트로 화면
+         ========================================== -->
+    <section id="screenIntro" class="screen">
+      <div class="top-nav">
+        <button class="back-btn" id="btnBackToMode" onclick="resetToHome()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          뒤로가기
+        </button>
+        <span class="spec-pill" id="introModeTag">인생 나락 시나리오</span>
+      </div>
+
+      <div class="intro-content">
+        <div class="intro-icon" id="introIcon">📉</div>
+        <h2 class="intro-title" id="introTitle">
+          내 인생,<br><span>어디서부터 잘못된 걸까?</span>
+        </h2>
+        <p class="intro-desc" id="introDesc">
+          순간의 선택이 평생을 좌우한다
+        </p>
+
+        <div class="intro-specs">
+          <span class="spec-pill">⏱ 1분 컷</span>
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="primary-btn" id="btnStartGame" onclick="startTest()">
+          내 미래 궤적 확인하러 가기
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         2. 7단계 극단적 밸런스 게임 화면
+         ========================================== -->
+    <section id="screenGame" class="screen">
+      <!-- 상단 인디케이터 & 진행률 바 -->
+      <div class="game-header">
+        <div class="game-status-bar">
+          <span class="step-indicator" id="stepIndicator">Q1.</span>
+          <span class="step-counter" id="stepCounter">1 / 7</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <!-- 질문 카드 -->
+      <div class="question-card">
+        <h2 class="question-text" id="questionText">질문 내용이 여기에 들어갑니다.</h2>
+
+        <!-- A / B 선택지 -->
+        <div class="options-container">
+          <button class="option-btn" id="optionA" onclick="selectAnswer(0)">
+            <span class="option-badge">A</span>
+            <div class="option-content">
+              <span class="option-text" id="optionAText">A 선택지 내용</span>
+            </div>
+          </button>
+
+          <button class="option-btn" id="optionB" onclick="selectAnswer(1)">
+            <span class="option-badge">B</span>
+            <div class="option-content">
+              <span class="option-text" id="optionBText">B 선택지 내용</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         3. 극적 로딩 화면 (업보/복리 스노우볼)
+         ========================================== -->
+    <section id="screenLoading" class="screen">
+      <div class="loading-content">
+        <div class="loading-spinner-wrapper">
+          <div class="spinner-ring"></div>
+          <div class="spinner-core" id="loadingSpinnerIcon">💀</div>
+        </div>
+        <h2 class="loading-title" id="loadingTitle">업보 스노우볼 굴러가는 중...</h2>
+        <p class="loading-desc" id="loadingDesc">사소한 나비효과의 파국 시나리오를 집계하고 있습니다.</p>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         4. 결과 화면 (인생 그래프 + 인과관계 + 인스타 공유)
+         ========================================== -->
+    <section id="screenResult" class="screen result-screen">
+      <!-- 헤더 & 등급 -->
+      <div class="result-header">
+        <div class="result-badge" id="resultBadge">
+          <span id="resultBadgeIcon">💀</span>
+          <span id="resultBadgeText">최종 나락 트리 완료</span>
+        </div>
+        <h2 class="result-title" id="resultTitle">결과 타이틀</h2>
+        <p class="result-rank" id="resultRank">등급 및 유형</p>
+      </div>
+
+      <!-- 인생 주식/롤러코스터 그래프 카드 -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+            <span id="chartTitle">인생 우하향 급락 궤적</span>
+          </div>
+          <span class="chart-trend-rate" id="chartTrendRate">-88%</span>
+        </div>
+        
+        <div class="chart-canvas-wrapper">
+          <canvas id="lifeTrendCanvas"></canvas>
+        </div>
+        <p class="chart-footer-caption">※ 7가지 선택에 따른 내 인생 굴곡 시뮬레이션</p>
+      </div>
+
+      <!-- 썰 & 인과관계 타임라인 카드 -->
+      <div class="story-card">
+        <div class="story-card-title" id="storyCardTitle">📌 2056년, 내 인생은</div>
+        <p class="story-summary" id="storySummary">요약 멘트</p>
+        <div class="story-timeline" id="storyTimeline">
+          <!-- 타임라인 아이템 동적 생성 -->
+        </div>
+      </div>
+
+      <!-- 조언 & 명언 카드 -->
+      <div class="advice-card">
+        <div class="advice-label" id="adviceLabel">💡 팩폭 한 줄 요약</div>
+        <p class="advice-text" id="adviceText">조언 문구가 표시됩니다.</p>
+      </div>
+
+      <!-- 구글 AI Plus 링크 연결 배너 -->
+      <a href="https://goo.gle/koreaseoul" target="_blank" rel="noopener noreferrer" class="cta-promo-banner" id="resultCtaBanner">
+        <div class="cta-promo-badge" id="resultCtaBadge">🛟 나락 방지 치트키</div>
+        <p class="cta-promo-title" id="resultCtaTitle">인생 나락 막고 싶다면?<br>구글 AI Plus 무료 혜택으로 갓생 시작하기</p>
+        <div class="cta-promo-btn">
+          <span>구글 AI Plus 혜택 받으러 가기</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+        </div>
+      </a>
+
+      <!-- 하단 액션 버튼 그룹 -->
+      <div class="action-buttons">
+        <!-- 1. 인스타 스토리 카드 PNG 다운로드 -->
+        <button class="primary-btn" id="btnDownloadStory" onclick="downloadStoryCard()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          인스타 스토리용 카드 이미지 저장
+        </button>
+
+        <!-- 2. 결과 링크 복사 -->
+        <button class="secondary-btn" id="btnShareResult" onclick="shareResult()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+          친구한테 결과 공유하기
+        </button>
+
+        <!-- 3. 이번 시나리오 다시 하기 -->
+        <button class="secondary-btn" id="btnRetryTest" onclick="startTest()">
+          ↺ 다른 선택지로 다시 해보기
+        </button>
+
+        <!-- 4. 반대 시나리오 도전 -->
+        <button class="ghost-btn" id="btnRestartHome" onclick="resetToHome()">
+          홈으로 가서 반대 시나리오(나락/떡상) 도전 →
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 토스트 메시지 -->
+  <div class="toast" id="toast">알림 메시지</div>
+
+  <!-- 스크립트 로드 (브라우저 캐시 방지 쿼리스트링 적용) -->
+  <script src="data.js?v=20260905_9"></script>
+  <script src="script.js?v=20260905_9"></script>
+</body>
+</html>
