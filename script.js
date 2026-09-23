@@ -220,13 +220,13 @@ function startLoadingSequence() {
     ? '사소하게 고른 답들이 어디까지 일을 키우나 보는 중...' 
     : '별생각 없이 고른 답들이 어디까지 대박 나는지 보는 중...';
 
-  // 4개 타이틀이 약 10초 영상 동안 자연스럽게 전환되도록 간격 조절 (~2.2초)
+  // 5개 타이틀(2026년 -> 2036년 -> 2046년 -> 2056년 -> 타임머신 도착)이 약 10초 영상 동안 자연스럽게 전환되도록 간격 조절 (~2.0초)
   const intervalId = setInterval(() => {
     titleIndex++;
     if (titleIndex < dataset.loadingTitles.length) {
       loadingTitle.textContent = dataset.loadingTitles[titleIndex];
     }
-  }, 2200);
+  }, 2000);
 
   let finished = false;
   const finishLoading = () => {
