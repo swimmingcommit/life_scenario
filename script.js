@@ -605,9 +605,9 @@ async function downloadStoryCard() {
 
   // 1-1. 상단 만화 나레이션 ("2056년 내 인생은...")
   ctx.textAlign = 'center';
-  ctx.font = "bold 34px 'MemomentKkukkukk', 'Galmuri14', monospace";
+  ctx.font = "bold 38px 'MemomentKkukkukk', 'Galmuri14', monospace";
   ctx.fillStyle = '#000000';
-  ctx.fillText('2056년 내 인생은...', 540, c1Y + 54);
+  ctx.fillText('2056년 내 인생은...', 540, c1Y + 56);
 
   // 1-2. 대표 일러스트 이미지 로드 & 중앙 정렬 배치
   let img = document.getElementById('resultImage');
@@ -628,23 +628,23 @@ async function downloadStoryCard() {
   }
 
   if (imgReady) {
-    const imgSize = 410;
+    const imgSize = 420;
     ctx.drawImage(img, 540 - imgSize / 2, c1Y + 76, imgSize, imgSize);
   }
 
-  // 1-3. 결과 타이틀 (화면 중간 정렬, 최적화 볼드 폰트)
-  ctx.font = "bold 46px 'MemomentKkukkukk', 'Galmuri14', monospace";
+  // 1-3. 결과 타이틀 (화면 중간 정렬, 가로폭 90% 채우는 50px 볼드)
+  ctx.font = "bold 50px 'MemomentKkukkukk', 'Galmuri14', monospace";
   ctx.fillStyle = '#000000';
-  wrapTextCentered(ctx, result.title, 540, c1Y + 548, 830, 58);
+  wrapTextCentered(ctx, result.title, 540, c1Y + 548, 860, 62);
 
   // ==========================================
   // 2. 썰 & 인과관계 타임라인 카드
   // ==========================================
-  const c2X = 75, c2Y = 780, c2W = 930, c2H = 540;
+  const c2X = 75, c2Y = 780, c2W = 930, c2H = 550;
   drawStoryCardBox(c2X, c2Y, c2W, c2H, 24);
 
   // 2-1. 상단 스티커 태그
-  const badgeW = 360, badgeH = 50;
+  const badgeW = 400, badgeH = 54;
   ctx.fillStyle = '#000000';
   roundRect(ctx, 540 - badgeW / 2 + 4, c2Y + 22 + 4, badgeW, badgeH, 12);
   ctx.fill();
@@ -657,69 +657,69 @@ async function downloadStoryCard() {
   ctx.stroke();
 
   ctx.textAlign = 'center';
-  ctx.font = "bold 26px 'MemomentKkukkukk', 'Galmuri14', monospace";
+  ctx.font = "bold 28px 'MemomentKkukkukk', 'Galmuri14', monospace";
   ctx.fillStyle = '#000000';
-  ctx.fillText('📌 2056년, 내 인생은', 540, c2Y + 56);
+  ctx.fillText('📌 2056년, 내 인생은', 540, c2Y + 58);
 
-  // 2-2. 요약 멘트 (summary)
-  ctx.font = "bold 25px 'MemomentKkukkukk', 'Galmuri11', monospace";
+  // 2-2. 요약 멘트 (summary: 28px 볼드로 확대해 가로폭 90% 채움)
+  ctx.font = "bold 28px 'MemomentKkukkukk', 'Galmuri11', monospace";
   ctx.fillStyle = '#222222';
-  let nextY = wrapTextCentered(ctx, '“' + result.summary + '”', 540, c2Y + 110, 830, 36);
+  let nextY = wrapTextCentered(ctx, '“' + result.summary + '”', 540, c2Y + 116, 860, 40);
 
   // 2-3. 구분 점선
   ctx.save();
   ctx.strokeStyle = '#d5d2c8';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([6, 6]);
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([7, 7]);
   ctx.beginPath();
-  ctx.moveTo(120, nextY + 10);
-  ctx.lineTo(960, nextY + 10);
+  ctx.moveTo(95, nextY + 14);
+  ctx.lineTo(985, nextY + 14);
   ctx.stroke();
   ctx.restore();
 
-  // 2-4. 4개 타임라인 목록
-  ctx.font = "25px 'MemomentKkukkukk', 'Galmuri11', monospace";
+  // 2-4. 4개 타임라인 목록 (28px 폰트와 넉넉한 줄간격으로 박스의 90% 꽉 채움)
+  ctx.font = "28px 'MemomentKkukkukk', 'Galmuri11', monospace";
   ctx.fillStyle = '#000000';
-  let tY = nextY + 44;
+  let tY = nextY + 52;
   result.story.forEach((line) => {
-    tY = wrapTextLeft(ctx, line, 115, tY, 840, 36) + 18;
+    tY = wrapTextLeft(ctx, line, 105, tY, 860, 40) + 20;
   });
 
   // ==========================================
   // 3. 조언 / 명언 카드
   // ==========================================
-  const c3X = 75, c3Y = 1350, c3W = 930, c3H = 240;
+  const c3X = 75, c3Y = 1360, c3W = 930, c3H = 245;
   drawStoryCardBox(c3X, c3Y, c3W, c3H, 24);
 
   // 마스킹 테이프 장식
   ctx.fillStyle = '#ffe600';
   ctx.strokeStyle = '#000000';
-  ctx.lineWidth = 3;
-  ctx.fillRect(470, c3Y - 14, 140, 28);
-  ctx.strokeRect(470, c3Y - 14, 140, 28);
+  ctx.lineWidth = 3.5;
+  ctx.fillRect(460, c3Y - 14, 160, 30);
+  ctx.strokeRect(460, c3Y - 14, 160, 30);
 
-  // 조언 라벨 (중앙 정렬)
+  // 조언 라벨 (32px 볼드)
   ctx.textAlign = 'center';
-  ctx.font = "bold 28px 'MemomentKkukkukk', 'Galmuri14', monospace";
+  ctx.font = "bold 32px 'MemomentKkukkukk', 'Galmuri14', monospace";
   ctx.fillStyle = '#000000';
-  ctx.fillText(dataset.adviceIcon, 540, c3Y + 54);
+  ctx.fillText(dataset.adviceIcon, 540, c3Y + 56);
 
-  // 조언 텍스트 (중앙 정렬)
-  ctx.font = "bold 29px 'MemomentKkukkukk', 'Galmuri11', monospace";
+  // 조언 텍스트 (34px 볼드로 확대해 박스의 90% 채움)
+  ctx.font = "bold 34px 'MemomentKkukkukk', 'Galmuri11', monospace";
   ctx.fillStyle = '#000000';
-  wrapTextCentered(ctx, '"' + result.advice + '"', 540, c3Y + 116, 830, 44);
+  wrapTextCentered(ctx, '"' + result.advice + '"', 540, c3Y + 122, 860, 48);
 
   // ==========================================
   // 4. 푸터 (인스타 계정 및 링크 유도)
   // ==========================================
   ctx.textAlign = 'center';
-  ctx.font = "bold 30px 'MemomentKkukkukk', 'Galmuri14', monospace";
+  ctx.font = "bold 32px 'MemomentKkukkukk', 'Galmuri14', monospace";
   ctx.fillStyle = '#000000';
-  ctx.fillText('🔗 프로필 링크에서 내 인생 시나리오 확인하기', 540, 1690);
+  ctx.fillText('🔗 프로필 링크에서 내 인생 시나리오 확인하기', 540, 1695);
 
-  ctx.font = "23px 'MemomentKkukkukk', 'Galmuri11', monospace";
+  ctx.font = "24px 'MemomentKkukkukk', 'Galmuri11', monospace";
   ctx.fillStyle = '#555555';
-  ctx.fillText('인생 떡상 & 나락 7단계 시나리오 테스트', 540, 1740);
+  ctx.fillText('인생 떡상 & 나락 7단계 시나리오 테스트', 540, 1748);
 
   // 다운로드 트리거
   const link = document.createElement('a');
