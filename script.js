@@ -40,6 +40,7 @@ const optionBText = document.getElementById('optionBText');
 
 // 로딩 요소
 const loadingSpinnerIcon = document.getElementById('loadingSpinnerIcon');
+const loadingVideo = document.getElementById('loadingVideo');
 const loadingTitle = document.getElementById('loadingTitle');
 const loadingDesc = document.getElementById('loadingDesc');
 
@@ -47,6 +48,8 @@ const loadingDesc = document.getElementById('loadingDesc');
 const resultBadge = document.getElementById('resultBadge');
 const resultBadgeIcon = document.getElementById('resultBadgeIcon');
 const resultBadgeText = document.getElementById('resultBadgeText');
+const resultImage = document.getElementById('resultImage');
+const resultImageWrapper = document.getElementById('resultImageWrapper');
 const resultTitle = document.getElementById('resultTitle');
 const resultRank = document.getElementById('resultRank');
 const chartTitle = document.getElementById('chartTitle');
@@ -65,6 +68,10 @@ function switchScreen(targetScreen) {
     screen.classList.remove('active');
   });
 
+  if (targetScreen !== screenLoading && loadingVideo && !loadingVideo.paused) {
+    loadingVideo.pause();
+  }
+
   setTimeout(() => {
     targetScreen.classList.add('active');
     // 결과창 진입 시 스크롤 맨 위로
@@ -76,6 +83,7 @@ function switchScreen(targetScreen) {
 
 // 4. 모드 선택
 function selectMode(mode) {
+  playCoinSfx();
   state.mode = mode;
   const config = TEST_DATA[mode];
 
@@ -93,13 +101,27 @@ function selectMode(mode) {
   switchScreen(screenIntro);
 }
 
-// 5. 테스트 시작
+// 배열 랜덤 셔플 함수 (Fisher-Yates)
+function shuffleQuestions(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// 5. 테스트 시작 (이용자마다 7문항 랜덤 셔플 출제)
 function startTest() {
+  const dataset = TEST_DATA[state.mode];
   state.currentQuestionIndex = 0;
   state.scores = {};
   state.trajectory = [state.mode === 'narak' ? 70 : 30]; // 나락은 위에서 아래로, 떡상은 아래서 위로
   state.choiceHistory = [];
   state.finalResult = null;
+
+  // 이용자마다 매번 7문항을 랜덤 셔플하여 출제
+  state.activeQuestions = shuffleQuestions(dataset.questions).slice(0, 7);
 
   renderQuestion();
   switchScreen(screenGame);
@@ -107,9 +129,8 @@ function startTest() {
 
 // 6. 질문 렌더링
 function renderQuestion() {
-  const dataset = TEST_DATA[state.mode];
-  const question = dataset.questions[state.currentQuestionIndex];
-  const totalQuestions = dataset.questions.length;
+  const question = state.activeQuestions[state.currentQuestionIndex];
+  const totalQuestions = state.activeQuestions.length;
   const currentStep = state.currentQuestionIndex + 1;
 
   // 인디케이터 & 진행률
@@ -129,8 +150,7 @@ function renderQuestion() {
 
 // 7. 선택지 클릭 처리
 function selectAnswer(choiceIdx) {
-  const dataset = TEST_DATA[state.mode];
-  const currentQ = dataset.questions[state.currentQuestionIndex];
+  const currentQ = state.activeQuestions[state.currentQuestionIndex];
   const chosenOpt = currentQ.options[choiceIdx];
 
   // 점수 누적
@@ -155,7 +175,7 @@ function selectAnswer(choiceIdx) {
 
   // 다음 질문 또는 결과 생성으로 이동
   state.currentQuestionIndex++;
-  if (state.currentQuestionIndex < dataset.questions.length) {
+  if (state.currentQuestionIndex < state.activeQuestions.length) {
     // 부드러운 전환 효과
     screenGame.style.opacity = '0.5';
     setTimeout(() => {
@@ -174,29 +194,66 @@ function startLoadingSequence() {
   const dataset = TEST_DATA[state.mode];
   switchScreen(screenLoading);
 
-  loadingSpinnerIcon.textContent = state.mode === 'narak' ? '💀' : '⚡';
+  if (loadingSpinnerIcon) {
+    loadingSpinnerIcon.textContent = state.mode === 'narak' ? '💀' : '⚡';
+  }
+
+  // 비디오 재생 및 소리 활성화
+  if (loadingVideo) {
+    loadingVideo.currentTime = 0;
+    loadingVideo.muted = false; // 소리 정상 재생
+    loadingVideo.volume = 1.0;
+    const playPromise = loadingVideo.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(err => {
+        console.warn('Autoplay with sound prevented by browser policy:', err);
+        // 브라우저 정책 대응: 음소거로 안전 재생 시도
+        loadingVideo.muted = true;
+        loadingVideo.play().catch(e => console.error('Video play error:', e));
+      });
+    }
+  }
 
   let titleIndex = 0;
   loadingTitle.textContent = dataset.loadingTitles[titleIndex];
   loadingDesc.textContent = state.mode === 'narak' 
-    ? '내가 누른 선택들이 만들어낸 파국 엔딩 계산 중...' 
-    : '내가 누른 똘기들이 만들어낸 대박 엔딩 계산 중...';
+    ? '사소하게 고른 답들이 어디까지 일을 키우나 보는 중...' 
+    : '별생각 없이 고른 답들이 어디까지 대박 나는지 보는 중...';
 
+  // 4개 타이틀이 약 10초 영상 동안 자연스럽게 전환되도록 간격 조절 (~2.2초)
   const intervalId = setInterval(() => {
     titleIndex++;
     if (titleIndex < dataset.loadingTitles.length) {
       loadingTitle.textContent = dataset.loadingTitles[titleIndex];
     }
-  }, 700);
+  }, 2200);
 
-  setTimeout(() => {
+  let finished = false;
+  const finishLoading = () => {
+    if (finished) return;
+    finished = true;
     clearInterval(intervalId);
+    if (loadingVideo) {
+      loadingVideo.removeEventListener('ended', finishLoading);
+      loadingVideo.pause();
+    }
     calculateAndShowResult();
-  }, 2300);
+  };
+
+  if (loadingVideo) {
+    loadingVideo.addEventListener('ended', finishLoading, { once: true });
+    // 영상이 약 10초이므로, 영상 종료 시 또는 10.5초 경과 시 안전하게 결과 화면으로 전환
+    setTimeout(finishLoading, 10500);
+  } else {
+    setTimeout(finishLoading, 2300);
+  }
 }
 
 // 9. 결과 계산 및 결과 화면 표시 (동점 버그 해결 및 정밀 판정)
 function calculateAndShowResult() {
+  if (loadingVideo && !loadingVideo.paused) {
+    loadingVideo.pause();
+  }
   const dataset = TEST_DATA[state.mode];
 
   // 1. 점수 내림차순 정렬
@@ -234,14 +291,39 @@ function calculateAndShowResult() {
   state.finalResult = resultData;
 
   // 결과 화면 바인딩
-  resultBadgeIcon.textContent = dataset.badgeIcon;
-  resultBadgeText.textContent = dataset.badgeText;
-  resultTitle.innerHTML = formatBreaks(resultData.title);
-  resultRank.textContent = resultData.rank;
+  if (resultBadgeIcon) {
+    resultBadgeIcon.textContent = '';
+    resultBadgeIcon.style.display = 'none';
+  }
+  if (resultBadgeText) {
+    resultBadgeText.textContent = '2056년 내 인생은... ';
+  }
 
-  chartTitle.textContent = dataset.chartTitle;
+  // 결과 이미지 바인딩 (배지 아래, 타이틀 위)
+  if (resultImage) {
+    if (resultData.image) {
+      resultImage.style.display = 'block';
+      if (resultImageWrapper) resultImageWrapper.style.display = 'flex';
+      resultImage.src = resultData.image;
+      resultImage.alt = resultData.title || '결과 이미지';
+      resultImage.onerror = function() {
+        this.style.display = 'none';
+        if (resultImageWrapper) resultImageWrapper.style.display = 'none';
+      };
+    } else {
+      resultImage.style.display = 'none';
+      if (resultImageWrapper) resultImageWrapper.style.display = 'none';
+    }
+  }
+
+  resultTitle.innerHTML = formatBreaks(resultData.title);
+  if (resultRank) {
+    resultRank.textContent = resultData.rank;
+  }
+
+  if (chartTitle) chartTitle.textContent = dataset.chartTitle;
   const trendSign = resultData.finalTrend > 0 ? `+${resultData.finalTrend}%` : `${resultData.finalTrend}%`;
-  chartTrendRate.textContent = trendSign;
+  if (chartTrendRate) chartTrendRate.textContent = trendSign;
   const storyCardTitle = document.getElementById('storyCardTitle');
   if (storyCardTitle) {
     storyCardTitle.textContent = '📌 2056년, 내 인생은';
@@ -267,142 +349,195 @@ function calculateAndShowResult() {
   const resultCtaBadge = document.getElementById('resultCtaBadge');
   if (resultCtaTitle) {
     if (state.mode === 'narak') {
-      resultCtaTitle.innerHTML = '인생 나락 막고 싶다면?<br>구글 AI Plus 무료 혜택으로 갓생 시작하기';
-      if (resultCtaBadge) resultCtaBadge.textContent = '🛟 나락 방지 치트키';
+      resultCtaTitle.innerHTML = '이대로 나락 갈 순 없다면?<br>구글 AI Plus 무료 혜택으로 갓생 시동 걸기';
+      if (resultCtaBadge) resultCtaBadge.textContent = '🛟 나락 탈출 치트키';
     } else {
-      resultCtaTitle.innerHTML = "인생 떡상 도와줄<br>'구글 AI Plus 무료 혜택' 받으러 가기";
+      resultCtaTitle.innerHTML = "이 떡상, 현실로 만들고 싶다면?<br>구글 AI Plus 무료 혜택 받으러 가기";
       if (resultCtaBadge) resultCtaBadge.textContent = '🚀 떡상 가속 부스터';
     }
   }
 
+  if (state.mode === 'narak') {
+    screenResult.classList.add('is-narak-result');
+    document.body.classList.add('is-narak-result');
+  } else {
+    screenResult.classList.remove('is-narak-result');
+    document.body.classList.remove('is-narak-result');
+  }
+
   switchScreen(screenResult);
 
-  // 차트 렌더링
-  setTimeout(() => {
-    renderLifeTrendChart();
-  }, 100);
+  // 차트 캔버스가 존재할 때만 렌더링
+  if (lifeTrendCanvas) {
+    setTimeout(() => {
+      renderLifeTrendChart(true);
+    }, 120);
+  }
 }
 
-// 10. 인터랙티브 주식/롤러코스터 인생 차트 렌더링 (볼드 펜선 낙서풍 Canvas)
-function renderLifeTrendChart() {
+let chartAnimId = null;
+
+// 10. 인터랙티브 주식/롤러코스터 인생 차트 렌더링 (코믹 브루탈리즘 픽셀 드로잉 Canvas)
+function renderLifeTrendChart(animate = true) {
+  if (chartAnimId) {
+    cancelAnimationFrame(chartAnimId);
+    chartAnimId = null;
+  }
+
   const canvas = lifeTrendCanvas;
+  if (!canvas || !canvas.parentElement) return;
+
   const dpr = window.devicePixelRatio || 1;
-  const rect = canvas.parentElement.getBoundingClientRect();
+  const parent = canvas.parentElement;
+  const rect = parent.getBoundingClientRect();
   
-  canvas.width = rect.width * dpr;
-  canvas.height = rect.height * dpr;
+  const w = Math.max(rect.width || 0, parent.clientWidth || 320);
+  const h = Math.max(rect.height || 0, parent.clientHeight || 190);
+
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
 
   const ctx = canvas.getContext('2d');
   ctx.scale(dpr, dpr);
 
-  const w = rect.width;
-  const h = rect.height;
-  const padding = { top: 30, bottom: 30, left: 40, right: 40 };
+  // 픽셀 렌더링 최적화
+  ctx.imageSmoothingEnabled = false;
 
-  const points = state.trajectory;
-  const stepX = (w - padding.left - padding.right) / (points.length - 1);
+  const padding = { top: 32, bottom: 32, left: 38, right: 38 };
+
+  // 궤적 데이터 확보 및 안전 폴백
+  const points = (state.trajectory && state.trajectory.length >= 2)
+    ? state.trajectory
+    : (state.mode === 'narak' ? [70, 55, 42, 30, 20, 14, 8, 5] : [30, 44, 56, 68, 78, 86, 92, 98]);
+
+  const stepX = (w - padding.left - padding.right) / Math.max(1, points.length - 1);
 
   const getY = (val) => {
-    return h - padding.bottom - (val / 100) * (h - padding.top - padding.bottom);
+    const safeVal = (typeof val === 'number' && !isNaN(val)) ? val : 50;
+    return h - padding.bottom - (safeVal / 100) * (h - padding.top - padding.bottom);
   };
 
-  ctx.clearRect(0, 0, w, h);
-
-  // 1. 연필 스케치 느낌의 가이드 점선
-  ctx.strokeStyle = 'rgba(26, 26, 26, 0.12)';
-  ctx.lineWidth = 1.5;
-  ctx.setLineDash([5, 5]);
-
-  [25, 50, 75].forEach(level => {
-    const y = getY(level);
-    ctx.beginPath();
-    ctx.moveTo(padding.left - 10, y);
-    ctx.lineTo(w - padding.right + 10, y);
-    ctx.stroke();
-  });
-  ctx.setLineDash([]);
-
-  // 2. 부드러운 곡선 좌표
   const coordinates = points.map((p, i) => ({
     x: padding.left + i * stepX,
     y: getY(p)
   }));
 
-  // 형광펜 칠한 듯한 영역 채우기
-  const areaGradient = ctx.createLinearGradient(0, padding.top, 0, h - padding.bottom);
-  if (state.mode === 'narak') {
-    areaGradient.addColorStop(0, 'rgba(255, 71, 87, 0.28)');
-    areaGradient.addColorStop(1, 'rgba(255, 71, 87, 0.02)');
-  } else {
-    areaGradient.addColorStop(0, 'rgba(34, 197, 94, 0.28)');
-    areaGradient.addColorStop(1, 'rgba(34, 197, 94, 0.02)');
-  }
+  const duration = animate ? 650 : 0; // 650ms 드로잉 애니메이션
+  let startTime = null;
 
-  // 곡선 영역 채우기
-  ctx.beginPath();
-  ctx.moveTo(coordinates[0].x, coordinates[0].y);
-  for (let i = 0; i < coordinates.length - 1; i++) {
-    const p0 = coordinates[i];
-    const p1 = coordinates[i + 1];
-    const midX = (p0.x + p1.x) / 2;
-    ctx.bezierCurveTo(midX, p0.y, midX, p1.y, p1.x, p1.y);
-  }
-  ctx.save();
-  ctx.lineTo(coordinates[coordinates.length - 1].x, h - padding.bottom);
-  ctx.lineTo(coordinates[0].x, h - padding.bottom);
-  ctx.closePath();
-  ctx.fillStyle = areaGradient;
-  ctx.fill();
-  ctx.restore();
+  function drawFrame(currentTime) {
+    if (startTime === null) {
+      startTime = currentTime;
+    }
+    const elapsed = Math.max(0, currentTime - startTime);
+    const progress = duration === 0 ? 1 : Math.min(1, Math.max(0, elapsed / duration));
+    // 톡톡 튀는 만화 느낌의 cubic ease-out
+    const eased = Math.max(0, Math.min(1, 1 - Math.pow(1 - progress, 3)));
 
-  // 굵은 네임펜 잉크 라인
-  ctx.beginPath();
-  ctx.moveTo(coordinates[0].x, coordinates[0].y);
-  for (let i = 0; i < coordinates.length - 1; i++) {
-    const p0 = coordinates[i];
-    const p1 = coordinates[i + 1];
-    const midX = (p0.x + p1.x) / 2;
-    ctx.bezierCurveTo(midX, p0.y, midX, p1.y, p1.x, p1.y);
-  }
-  ctx.strokeStyle = '#1a1a1a';
-  ctx.lineWidth = 4.5;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.stroke();
+    ctx.clearRect(0, 0, w, h);
 
-  // 3. 손그림 원형 포인트 & 말풍선 뱃지
-  coordinates.forEach((pt, idx) => {
-    ctx.beginPath();
-    ctx.arc(pt.x, pt.y, idx === coordinates.length - 1 ? 7 : 5, 0, Math.PI * 2);
-    ctx.fillStyle = idx === coordinates.length - 1 ? (state.mode === 'narak' ? '#ff4757' : '#2ed573') : '#ffffff';
-    ctx.fill();
-    ctx.strokeStyle = '#1a1a1a';
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
+    // 1. 코믹 픽셀 가이드 점선 (그라데이션 없이 순수 블랙/화이트 대비)
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
 
-    ctx.textAlign = 'center';
-
-    if (idx === 0) {
-      ctx.font = "800 11px 'HG꼬딕씨', 'Pretendard', sans-serif";
-      ctx.fillStyle = '#4b4b4b';
-      ctx.fillText('시작', pt.x, pt.y - 12);
-    } else if (idx === coordinates.length - 1) {
-      // 최종 낙서 뱃지
-      ctx.font = "900 12px 'HG꼬딕씨', 'Pretendard', sans-serif";
-      const endTag = state.mode === 'narak' ? '💀 파국' : '🚀 떡상';
-      
-      // 노란색 미니 스티커 박스
-      ctx.fillStyle = '#ffe600';
-      ctx.strokeStyle = '#1a1a1a';
-      ctx.lineWidth = 1.5;
-      roundRect(ctx, pt.x - 26, pt.y - 32, 52, 22, 6);
-      ctx.fill();
+    [25, 50, 75].forEach(level => {
+      const y = getY(level);
+      ctx.beginPath();
+      ctx.moveTo(padding.left - 10, y);
+      ctx.lineTo(w - padding.right + 10, y);
       ctx.stroke();
 
-      ctx.fillStyle = '#1a1a1a';
-      ctx.fillText(endTag, pt.x, pt.y - 17);
+      // 수치 픽셀 폰트 라벨
+      ctx.setLineDash([]);
+      ctx.font = "11px 'MemomentKkukkukk', 'Galmuri11', monospace";
+      ctx.fillStyle = '#000000';
+      ctx.textAlign = 'right';
+      ctx.fillText(`${level}%`, padding.left - 14, y + 3.5);
+      ctx.setLineDash([4, 4]);
+    });
+    ctx.setLineDash([]);
+
+    // 현재 진행률에 따른 드로잉 도달 지점 계산 (인덱스 언더플로우/오버플로우 방어)
+    const totalSegments = Math.max(1, coordinates.length - 1);
+    const currentProgressPoint = eased * totalSegments;
+    const activeSegmentIndex = Math.max(0, Math.min(Math.floor(currentProgressPoint), totalSegments - 1));
+    const segmentProgress = Math.max(0, Math.min(1, currentProgressPoint - activeSegmentIndex));
+
+    const p1 = coordinates[activeSegmentIndex] || coordinates[0];
+    const p2 = coordinates[Math.min(activeSegmentIndex + 1, totalSegments)] || p1;
+
+    const currentHead = {
+      x: p1.x + (p2.x - p1.x) * segmentProgress,
+      y: p1.y + (p2.y - p1.y) * segmentProgress
+    };
+
+    // 2. 꺾은선 그래프: 굵은 검은색 픽셀 선 (그라데이션 완전 제거)
+    ctx.beginPath();
+    ctx.moveTo(coordinates[0].x, coordinates[0].y);
+
+    for (let i = 1; i <= activeSegmentIndex; i++) {
+      ctx.lineTo(coordinates[i].x, coordinates[i].y);
     }
-  });
+    if (activeSegmentIndex < totalSegments) {
+      ctx.lineTo(currentHead.x, currentHead.y);
+    }
+
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'square';
+    ctx.lineJoin = 'miter';
+    ctx.stroke();
+
+    // 3. 각 노드(데이터 꼭짓점): 하얀색 배경에 굵은 검은색 테두리 원형 (border: 3px solid #000; background: #fff;)
+    for (let i = 0; i < coordinates.length; i++) {
+      const pt = coordinates[i];
+      if (pt.x > currentHead.x + 0.5) continue;
+
+      const isStart = (i === 0);
+      const isEnd = (i === coordinates.length - 1);
+      const radius = isEnd ? 7 : 5.5;
+
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // 시작/끝점 라벨 (MemomentKkukkukk 폰트)
+      if (isStart) {
+        ctx.font = "bold 12px 'MemomentKkukkukk', 'Galmuri11', monospace";
+        ctx.fillStyle = '#000000';
+        ctx.textAlign = 'center';
+        ctx.fillText('START', pt.x, pt.y - 12);
+      } else if (isEnd && progress >= 0.98) {
+        // 최종 코믹북 옐로우 픽셀 뱃지
+        const endTag = state.mode === 'narak' ? '💀 파국' : '🚀 떡상';
+        ctx.font = "bold 13px 'MemomentKkukkukk', 'Galmuri14', monospace";
+        
+        ctx.fillStyle = '#ffe600';
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2.5;
+        // 코믹 브루탈리즘 사각 박스
+        ctx.fillRect(pt.x - 30, pt.y - 34, 60, 22);
+        ctx.strokeRect(pt.x - 30, pt.y - 34, 60, 22);
+
+        ctx.fillStyle = '#000000';
+        ctx.textAlign = 'center';
+        ctx.fillText(endTag, pt.x, pt.y - 19);
+      }
+    }
+
+    if (progress < 1) {
+      chartAnimId = requestAnimationFrame(drawFrame);
+    } else {
+      chartAnimId = null;
+    }
+  }
+
+  chartAnimId = requestAnimationFrame(drawFrame);
 }
 
 // 11. 인스타그램 스토리(9:16) 인스타툰/웹툰 컷 스타일 고해상도 카드 생성 및 PNG 다운로드
@@ -450,64 +585,60 @@ async function downloadStoryCard() {
   // C. 헤더 상단 스티커 태그
   ctx.save();
   ctx.translate(540, 150);
-  ctx.rotate(-0.02);
+  ctx.rotate(-0.015);
   
   // 스티커 그림자 & 본체
-  ctx.fillStyle = '#1a1a1a';
-  roundRect(ctx, -260, -35, 520, 70, 20);
-  ctx.fill();
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(-260, -35, 520, 70);
 
   ctx.fillStyle = '#ffe600';
-  ctx.strokeStyle = '#1a1a1a';
+  ctx.strokeStyle = '#000000';
   ctx.lineWidth = 4;
-  roundRect(ctx, -265, -42, 520, 70, 20);
-  ctx.fill();
-  ctx.stroke();
+  ctx.fillRect(-266, -42, 520, 70);
+  ctx.strokeRect(-266, -42, 520, 70);
 
   ctx.textAlign = 'center';
-  ctx.font = "900 32px 'HG꼬딕씨', 'Pretendard', sans-serif";
-  ctx.fillStyle = '#1a1a1a';
+  ctx.font = "bold 32px 'MemomentKkukkukk', 'Galmuri14', monospace";
+  ctx.fillStyle = '#000000';
   const modeBadgeText = isNarak ? '⚡ 인생 나락 7단계 시나리오' : '⚡ 인생 떡상 7단계 시나리오';
-  ctx.fillText(modeBadgeText, -5, 8);
+  ctx.fillText(modeBadgeText, -6, 6);
   ctx.restore();
 
   // D. 등급 서브 타이틀
   ctx.textAlign = 'center';
-  ctx.font = "800 30px 'HG꼬딕씨', 'Pretendard', sans-serif";
-  ctx.fillStyle = '#4b4b4b';
+  ctx.font = "bold 28px 'MemomentKkukkukk', 'Galmuri11', monospace";
+  ctx.fillStyle = '#000000';
   ctx.fillText(`[ ${result.rank} ]`, 540, 270);
 
   // E. 메인 결과 타이틀 (형광펜 박스 + 볼드 폰트)
-  ctx.font = "900 58px 'HG꼬딕씨', 'Pretendard', sans-serif";
-  ctx.fillStyle = '#1a1a1a';
-  wrapText(ctx, result.title, 540, 360, 920, 75);
+  ctx.font = "bold 52px 'MemomentKkukkukk', 'Galmuri14', monospace";
+  ctx.fillStyle = '#000000';
+  wrapText(ctx, result.title, 540, 360, 920, 72);
 
-  // F. 인생 그래프 박스 (인스타툰 컷 스타일)
+  // F. 인생 그래프 박스 (코믹 브루탈리즘 만화 컷 스타일)
   const chartBoxY = 490;
   const chartBoxH = 470;
   
   // 그림자
-  ctx.fillStyle = '#1a1a1a';
-  roundRect(ctx, 88, chartBoxY + 8, 904, chartBoxH, 28);
-  ctx.fill();
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(88, chartBoxY + 8, 904, chartBoxH);
 
   // 본체
   ctx.fillStyle = '#ffffff';
-  ctx.strokeStyle = '#1a1a1a';
+  ctx.strokeStyle = '#000000';
   ctx.lineWidth = 6;
-  roundRect(ctx, 80, chartBoxY, 904, chartBoxH, 28);
-  ctx.fill();
-  ctx.stroke();
+  ctx.fillRect(80, chartBoxY, 904, chartBoxH);
+  ctx.strokeRect(80, chartBoxY, 904, chartBoxH);
 
   // 차트 헤더
   ctx.textAlign = 'left';
-  ctx.font = "900 34px 'HG꼬딕씨', 'Pretendard', sans-serif";
-  ctx.fillStyle = '#1a1a1a';
+  ctx.font = "bold 34px 'MemomentKkukkukk', 'Galmuri14', monospace";
+  ctx.fillStyle = '#000000';
   ctx.fillText(`📊 ${TEST_DATA[mode].chartTitle}`, 125, chartBoxY + 65);
 
   ctx.textAlign = 'right';
-  ctx.font = "900 40px 'HG꼬딕씨', 'Pretendard', sans-serif";
-  ctx.fillStyle = isNarak ? '#ff3344' : '#059669';
+  ctx.font = "bold 40px 'MemomentKkukkukk', 'Galmuri14', monospace";
+  ctx.fillStyle = isNarak ? '#000000' : '#000000';
   const trendSign = result.finalTrend > 0 ? `+${result.finalTrend}%` : `${result.finalTrend}%`;
   ctx.fillText(trendSign, 940, chartBoxY + 65);
 
@@ -519,41 +650,38 @@ async function downloadStoryCard() {
   const storyBoxH = 480;
 
   // 그림자
-  ctx.fillStyle = '#1a1a1a';
-  roundRect(ctx, 88, storyBoxY + 8, 904, storyBoxH, 28);
-  ctx.fill();
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(88, storyBoxY + 8, 904, storyBoxH);
 
   // 본체
-  ctx.fillStyle = '#faf9f5';
-  ctx.strokeStyle = '#1a1a1a';
-  ctx.lineWidth = 5;
-  roundRect(ctx, 80, storyBoxY, 904, storyBoxH, 28);
-  ctx.fill();
-  ctx.stroke();
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 6;
+  ctx.fillRect(80, storyBoxY, 904, storyBoxH);
+  ctx.strokeRect(80, storyBoxY, 904, storyBoxH);
 
   // 썰 박스 타이틀 태그
   ctx.save();
   ctx.fillStyle = '#ffe600';
-  ctx.strokeStyle = '#1a1a1a';
+  ctx.strokeStyle = '#000000';
   ctx.lineWidth = 3;
-  roundRect(ctx, 115, storyBoxY + 30, 460, 52, 12);
-  ctx.fill();
-  ctx.stroke();
+  ctx.fillRect(115, storyBoxY + 30, 440, 52);
+  ctx.strokeRect(115, storyBoxY + 30, 440, 52);
   
   ctx.textAlign = 'left';
-  ctx.font = "900 28px 'HG꼬딕씨', 'Pretendard', sans-serif";
-  ctx.fillStyle = '#1a1a1a';
+  ctx.font = "bold 26px 'MemomentKkukkukk', 'Galmuri14', monospace";
+  ctx.fillStyle = '#000000';
   ctx.fillText('📌 2056년, 내 인생은', 135, storyBoxY + 66);
   ctx.restore();
 
   // 타임라인 텍스트 (왼쪽 정렬 명시)
   ctx.textAlign = 'left';
-  ctx.font = "700 26px 'HG꼬딕씨', 'Pretendard', sans-serif";
-  ctx.fillStyle = '#2d3436';
+  ctx.font = "24px 'MemomentKkukkukk', 'Galmuri11', monospace";
+  ctx.fillStyle = '#000000';
   
   let textY = storyBoxY + 130;
   result.story.forEach(line => {
-    textY = wrapText(ctx, line, 125, textY, 810, 38) + 28;
+    textY = wrapText(ctx, line, 125, textY, 810, 36) + 26;
   });
 
   // H. 조언/명언 말풍선 박스
@@ -561,55 +689,52 @@ async function downloadStoryCard() {
   const adviceBoxH = 210;
 
   // 그림자
-  ctx.fillStyle = '#1a1a1a';
-  roundRect(ctx, 88, adviceBoxY + 8, 904, adviceBoxH, 26);
-  ctx.fill();
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(88, adviceBoxY + 8, 904, adviceBoxH);
 
   // 본체 (스티커/메모지 스타일)
-  ctx.fillStyle = '#fffbe6';
-  ctx.strokeStyle = '#1a1a1a';
-  ctx.lineWidth = 5;
-  roundRect(ctx, 80, adviceBoxY, 904, adviceBoxH, 26);
-  ctx.fill();
-  ctx.stroke();
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 6;
+  ctx.fillRect(80, adviceBoxY, 904, adviceBoxH);
+  ctx.strokeRect(80, adviceBoxY, 904, adviceBoxH);
 
   // 마스킹 테이프 장식
-  ctx.fillStyle = '#fed330';
-  ctx.strokeStyle = '#1a1a1a';
-  ctx.lineWidth = 2.5;
-  roundRect(ctx, 470, adviceBoxY - 14, 140, 30, 4);
-  ctx.fill();
-  ctx.stroke();
+  ctx.fillStyle = '#ffe600';
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 3;
+  ctx.fillRect(470, adviceBoxY - 14, 140, 30);
+  ctx.strokeRect(470, adviceBoxY - 14, 140, 30);
 
   ctx.textAlign = 'left';
-  ctx.font = "900 28px 'HG꼬딕씨', 'Pretendard', sans-serif";
-  ctx.fillStyle = '#1a1a1a';
+  ctx.font = "bold 28px 'MemomentKkukkukk', 'Galmuri14', monospace";
+  ctx.fillStyle = '#000000';
   ctx.fillText(TEST_DATA[mode].adviceIcon, 120, adviceBoxY + 60);
 
-  ctx.font = "800 30px 'HG꼬딕씨', 'Pretendard', sans-serif";
-  ctx.fillStyle = '#1a1a1a';
-  wrapText(ctx, `"${result.advice}"`, 120, adviceBoxY + 120, 820, 46);
+  ctx.font = "bold 28px 'MemomentKkukkukk', 'Galmuri11', monospace";
+  ctx.fillStyle = '#000000';
+  wrapText(ctx, `"${result.advice}"`, 120, adviceBoxY + 120, 820, 44);
 
   // I. 푸터 (인스타툰 계정 및 링크 유도)
   ctx.textAlign = 'center';
-  ctx.font = "900 32px 'HG꼬딕씨', 'Pretendard', sans-serif";
-  ctx.fillStyle = '#1a1a1a';
+  ctx.font = "bold 30px 'MemomentKkukkukk', 'Galmuri14', monospace";
+  ctx.fillStyle = '#000000';
   ctx.fillText('🔗 프로필 링크에서 내 인생 그래프 확인하기', 540, 1795);
 
-  ctx.font = "700 24px 'HG꼬딕씨', 'Pretendard', sans-serif";
-  ctx.fillStyle = '#767676';
+  ctx.font = "22px 'MemomentKkukkukk', 'Galmuri11', monospace";
+  ctx.fillStyle = '#000000';
   ctx.fillText('인생 떡상 & 나락 7단계 시나리오 테스트', 540, 1845);
 
   // 다운로드 트리거
   const link = document.createElement('a');
-  link.download = `인생_${mode === 'narak' ? '나락' : '떡상'}_인스타툰_카드.png`;
+  link.download = `인생_${mode === 'narak' ? '나락' : '떡상'}_코믹_카드.png`;
   link.href = storyCanvas.toDataURL('image/png');
   link.click();
 
-  showToast('📸 인스타툰 스타일 카드가 저장되었습니다!');
+  showToast('📸 코믹 브루탈리즘 스타일 카드가 저장되었습니다!');
 }
 
-// 스토리 캔버스 차트 그리기
+// 스토리 캔버스 차트 그리기 (그라데이션 없이 굵은 픽셀 꺾은선)
 function drawChartOnStory(ctx, x, y, width, height, points, isNarak) {
   const stepX = width / (points.length - 1);
   const getY = (val) => y + height - (val / 100) * height;
@@ -619,45 +744,38 @@ function drawChartOnStory(ctx, x, y, width, height, points, isNarak) {
     y: getY(p)
   }));
 
-  // 형광펜 채우기
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(coords[0].x, coords[0].y);
-  for (let i = 0; i < coords.length - 1; i++) {
-    const p0 = coords[i];
-    const p1 = coords[i + 1];
-    const midX = (p0.x + p1.x) / 2;
-    ctx.bezierCurveTo(midX, p0.y, midX, p1.y, p1.x, p1.y);
-  }
-  ctx.lineTo(coords[coords.length - 1].x, y + height);
-  ctx.lineTo(coords[0].x, y + height);
-  ctx.closePath();
-  ctx.fillStyle = isNarak ? 'rgba(255, 71, 87, 0.22)' : 'rgba(34, 197, 94, 0.22)';
-  ctx.fill();
-  ctx.restore();
+  // 가이드 라인
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([8, 8]);
+  [25, 50, 75].forEach(lvl => {
+    const gy = getY(lvl);
+    ctx.beginPath();
+    ctx.moveTo(x, gy);
+    ctx.lineTo(x + width, gy);
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
 
-  // 굵은 잉크 라인
+  // 굵은 검은색 픽셀 직선 꺾은선 (그라데이션 제거)
   ctx.beginPath();
   ctx.moveTo(coords[0].x, coords[0].y);
-  for (let i = 0; i < coords.length - 1; i++) {
-    const p0 = coords[i];
-    const p1 = coords[i + 1];
-    const midX = (p0.x + p1.x) / 2;
-    ctx.bezierCurveTo(midX, p0.y, midX, p1.y, p1.x, p1.y);
+  for (let i = 1; i < coords.length; i++) {
+    ctx.lineTo(coords[i].x, coords[i].y);
   }
-  ctx.strokeStyle = '#1a1a1a';
-  ctx.lineWidth = 10;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 8;
+  ctx.lineCap = 'square';
+  ctx.lineJoin = 'miter';
   ctx.stroke();
 
-  // 볼드 포인트
+  // 노드 꼭짓점: 하얀색 원 + 굵은 검은색 테두리
   coords.forEach((pt, idx) => {
     ctx.beginPath();
-    ctx.arc(pt.x, pt.y, idx === coords.length - 1 ? 16 : 10, 0, Math.PI * 2);
-    ctx.fillStyle = idx === coords.length - 1 ? (isNarak ? '#ff4757' : '#2ed573') : '#ffffff';
+    ctx.arc(pt.x, pt.y, idx === coords.length - 1 ? 16 : 11, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
     ctx.fill();
-    ctx.strokeStyle = '#1a1a1a';
+    ctx.strokeStyle = '#000000';
     ctx.lineWidth = 5;
     ctx.stroke();
   });
@@ -683,28 +801,48 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
   return y;
 }
 
-// 쉼표(,) 및 마침표(.) 기준 줄바꿈 헬퍼
-function formatBreaks(text) {
+// 단어(어절) 및 음절이 깨지지 않으면서 위아래 글자수 비율을 5:5에 가깝게 맞추는 균형 줄바꿈 헬퍼
+function splitBalancedLines(text, threshold = 18) {
   if (!text) return '';
-  // 1. 쉼표 뒤 공백: ', ' -> ',<br>'
-  let res = text.replace(/,\s+/g, ',<br>');
-  // 2. 느낌표/물음표 뒤 공백
-  res = res.replace(/([!?]["'”’]?)\s+/g, '$1<br>');
-  // 3. 문장 끝 마침표(.) 뒤 공백 (단, 시작 번호 1. 2. 등은 제외)
-  res = res.replace(/([^0-9\s]\.["'”’]?)\s+/g, '$1<br>');
-  return res;
+  const trimmed = text.trim();
+  if (trimmed.length <= threshold) return trimmed;
+
+  const words = trimmed.split(/\s+/);
+  if (words.length <= 1) return trimmed;
+
+  const totalLen = trimmed.length;
+  const targetHalf = totalLen / 2;
+
+  let bestSplit = 1;
+  let minDiff = Infinity;
+  let currentLen = 0;
+
+  for (let i = 0; i < words.length - 1; i++) {
+    currentLen += words[i].length + (i > 0 ? 1 : 0);
+    const diff = Math.abs(currentLen - targetHalf);
+    if (diff < minDiff) {
+      minDiff = diff;
+      bestSplit = i + 1;
+    }
+  }
+
+  const line1 = words.slice(0, bestSplit).join(' ');
+  const line2 = words.slice(bestSplit).join(' ');
+  return `${line1}<br>${line2}`;
 }
 
-// 선택지 탭 전용: 세 줄이 되지 않고 정확히 최대 2줄까지만 줄바꿈되도록 첫 번째 쉼표 분할
+// 질문, 타이틀 등 텍스트 균형 분할
+function formatBreaks(text) {
+  if (!text) return '';
+  if (text.includes('<br>') || text.includes('\n')) return text;
+  return splitBalancedLines(text, 22);
+}
+
+// 선택지 텍스트 균형 분할 (16글자 초과 시 위아래 비율 5:5에 가깝게 분할, 단어/음절 분절 방지)
 function formatOptionBreaks(text) {
   if (!text) return '';
-  const commaIdx = text.indexOf(',');
-  if (commaIdx !== -1) {
-    const p1 = text.slice(0, commaIdx + 1).trim();
-    const p2 = text.slice(commaIdx + 1).trim();
-    return `${p1}<br>${p2}`;
-  }
-  return text;
+  if (text.includes('<br>')) return text;
+  return splitBalancedLines(text, 16);
 }
 
 // 둥근 사각형 헬퍼
@@ -762,12 +900,117 @@ function showToast(message) {
 function resetToHome() {
   state.mode = 'narak';
   document.body.className = 'theme-narak';
+  document.body.classList.remove('is-narak-result');
+  if (screenResult) screenResult.classList.remove('is-narak-result');
   switchScreen(screenModeSelect);
 }
 
 // 브라우저 리사이즈 시 차트 재계산
 window.addEventListener('resize', () => {
-  if (screenResult.classList.contains('active')) {
+  if (screenResult.classList.contains('active') && lifeTrendCanvas) {
     renderLifeTrendChart();
+  }
+});
+
+// ==========================================
+// 14. Web Audio API 기반 무설치 효과음(SFX) 시스템
+// ==========================================
+let audioCtx = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+// 효과음 재생 함수 (type: 'pop' | 'select' | 'action')
+function playSfx(type = 'pop') {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    if (type === 'select') {
+      // A/B 선택지 클릭 시: 쫀득하고 탄력 있는 듀얼 탭 사운드
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.exponentialRampToValueAtTime(260, now + 0.08);
+
+      gain.gain.setValueAtTime(0.22, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    } else if (type === 'action') {
+      // 주요 액션 버튼(시작하기, 이미지 저장 등): 밝고 산뜻한 상승 톤
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(380, now);
+      osc.frequency.exponentialRampToValueAtTime(680, now + 0.12);
+
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.12);
+    } else {
+      // 일반 버튼 클릭 시: 가볍고 경쾌한 미니 팝(Pop) 사운드
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(650, now);
+      osc.frequency.exponentialRampToValueAtTime(220, now + 0.06);
+
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.06);
+    }
+  } catch (err) {
+    // 오디오 정책 등으로 인한 에러 무시
+  }
+}
+
+// 코인 효과음 (대문 페이지 버튼 전용 coin-sfx.mp3)
+const coinAudio = new Audio('coin-sfx.mp3');
+coinAudio.preload = 'auto';
+
+function playCoinSfx() {
+  try {
+    const sound = coinAudio.cloneNode();
+    sound.volume = 0.85;
+    sound.play().catch(() => {});
+  } catch (e) {}
+}
+
+// 모든 버튼 및 클릭 가능한 요소에 이벤트 위임으로 효과음 연결
+document.addEventListener('click', (e) => {
+  const target = e.target.closest('button, [role="button"], .mode-card, .destiny-gate, .option-btn, a');
+  if (!target) return;
+
+  // 1. 대문 페이지(screenModeSelect) 내 모든 버튼/게이트/링크 클릭 시 coin-sfx.mp3 재생
+  if (target.closest('#screenModeSelect')) {
+    playCoinSfx();
+    return;
+  }
+
+  // 2. 다른 화면 버튼별 효과음
+  if (target.classList.contains('option-btn') || target.closest('.option-btn')) {
+    playSfx('select');
+  } else if (target.classList.contains('primary-btn') || target.id === 'btnStartGame') {
+    playSfx('action');
+  } else {
+    playSfx('pop');
   }
 });

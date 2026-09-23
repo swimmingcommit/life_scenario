@@ -1,140 +1,60 @@
 /* =========================================================
-   인생 떡상 & 나락 테스트 - 볼드 낙서 & 인스타툰 디자인 (style.css)
-   컨셉: 화이트 배경 + 굵은 블랙 펜선 + 키치한 형광펜 마커 하이라이트
+   인생 떡상 & 나락 시나리오 - 코믹 브루탈리즘 (Comic Brutalism)
+   테마: 흑백 픽셀 / 만화 스타일 + 갈무리(Galmuri) 폰트
+   규칙:
+     - 배경: #FFFFFF (순백색)
+     - 텍스트 및 라인아트: #000000 (순수 검은색)
+     - 강조 포인트: #FFE600 (코믹북 옐로우)
+     - 폰트: Galmuri11 (기본), Galmuri14 (제목/강조)
+     - 박스 & 카드: border: 3px solid #000; box-shadow: 6px 6px 0px #000; (blur 금지, padding 24px 이상)
+     - 버튼: 배경 #FFE600, 테두리/글씨 #000, hover 시 그림자 깊이 인터랙션
+     - 차트: 그라데이션 제거, 굵은 픽셀 꺾은선, 화이트/블랙 노드
+     - 떡락 시: 거친 만화 망점(Halftone) 패턴 은은 적용
    ========================================================= */
 
-/* HG꼬딕씨 웹폰트 설정 */
+/* MemomentKkukkukk (메모먼트 꾹꾹체) 로컬 웹폰트 설정 */
 @font-face {
-  font-family: 'HG꼬딕씨';
-  src: local('HG꼬딕씨 00g'), local('HGGGothicssi 00g'),
-       url('./fonts/HGGGothicssi%2000g.ttf') format('truetype');
-  font-weight: 100 200;
+  font-family: 'MemomentKkukkukk';
+  src: url('./fonts/MemomentKkukkukk.otf') format('opentype');
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'HG꼬딕씨';
-  src: local('HG꼬딕씨 20g'), local('HGGGothicssi 20g'),
-       url('./fonts/HGGGothicssi%2020g.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* 60g(SemiBold)를 기본 레귤러(400) 및 세미볼드(600)로 연결 */
-@font-face {
-  font-family: 'HG꼬딕씨';
-  src: local('HG꼬딕씨 60g'), local('HGGGothicssi 60g'),
-       url('./fonts/HGGGothicssi%2060g.ttf') format('truetype');
-  font-weight: 400 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'HG꼬딕씨';
-  src: local('HG꼬딕씨 80g'), local('HGGGothicssi 80g'),
-       url('./fonts/HGGGothicssi%2080g.ttf') format('truetype');
-  font-weight: 700 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'HG꼬딕씨';
-  src: local('HG꼬딕씨 99g'), local('HGGGothicssi 99g'),
-       url('./fonts/HGGGothicssi%2099g.ttf') format('truetype');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* 영문 서체명 호환 */
-@font-face {
-  font-family: 'HGGGothicssi';
-  src: local('HG꼬딕씨 60g'), local('HGGGothicssi 60g'),
-       url('./fonts/HGGGothicssi%2060g.ttf') format('truetype');
-  font-weight: 400 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'HGGGothicssi';
-  src: local('HG꼬딕씨 80g'), local('HGGGothicssi 80g'),
-       url('./fonts/HGGGothicssi%2080g.ttf') format('truetype');
-  font-weight: 700 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'HGGGothicssi';
-  src: local('HG꼬딕씨 99g'), local('HGGGothicssi 99g'),
-       url('./fonts/HGGGothicssi%2099g.ttf') format('truetype');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+@import url('https://cdn.jsdelivr.net/npm/galmuri/dist/galmuri.css');
 
 :root {
-  --font-main: "HG꼬딕씨", "HGGGothicssi", "HG꼬딕씨 60g", "HGGGothicssi 60g", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* 컬러 팔레트 */
+  --bg-white: #ffffff;
+  --text-black: #000000;
+  --accent-yellow: #ffe600;
   
-  /* 공통 잉크 & 종이 색상 */
-  --ink-black: #1a1a1a;
-  --ink-gray: #4b4b4b;
-  --ink-light: #767676;
-  --paper-white: #ffffff;
-  --paper-cream: #faf9f5;
-  --paper-border: #1a1a1a;
-  
-  /* 낙서 스트로크 & 그림자 */
-  --border-thick: 3px solid var(--ink-black);
-  --border-medium: 2.5px solid var(--ink-black);
-  --border-doodle: 255px 15px 225px 15px / 15px 225px 15px 255px;
-  --border-doodle-alt: 20px 255px 20px 25px / 255px 20px 225px 20px;
-  --doodle-shadow: 4px 4px 0px var(--ink-black);
-  --doodle-shadow-lg: 6px 6px 0px var(--ink-black);
-  --doodle-shadow-sm: 3px 3px 0px var(--ink-black);
-  --doodle-shadow-hover: 2px 2px 0px var(--ink-black);
-  
-  /* 기본 하이라이트 (형광 노랑 마커) */
-  --marker-yellow: #ffe600;
-  --marker-coral: #ff5252;
-  --marker-mint: #22c55e;
-  --marker-blue: #38bdf8;
-  
-  /* 모드별 테마 변수 (기본 나락) */
-  --theme-accent: #ff4757;
-  --theme-marker: #ffccd0;
-  --theme-light: #fff5f5;
-  --theme-sticker-bg: #ffeaa7;
+  /* 코믹 브루탈리즘 규격 */
+  --border-thick: 3px solid #000000;
+  --border-ultra: 4px solid #000000;
+  --border-medium: 3px solid #000000;
+  --border-thin: 2px solid #000000;
+
+  /* 단색 그림자 및 둥근 모서리 규격 */
+  --shadow-comic: none;
+  --shadow-comic-sm: none;
+  --shadow-comic-lg: none;
+  --shadow-comic-hover: none;
+  --radius-card: 16px;
+  --radius-btn: 12px;
+  --radius-badge: 8px;
+
+  /* 타이포그래피: MemomentKkukkukk 꾹꾹체 */
+  --font-base: 'MemomentKkukkukk', 'Galmuri11', sans-serif;
+  --font-title: 'MemomentKkukkukk', 'Galmuri14', sans-serif;
+
+  /* 만화 칸 내부 여백 */
+  --card-padding: 24px;
 }
 
-/* 1. 나락 모드: 화이트 스케치북 + 볼드 블랙 + 레드/다크 마커 포인트 */
-body.theme-narak {
-  --theme-accent: #ff3344;
-  --theme-marker: #ffe0e3;
-  --theme-light: #fff8f8;
-  --theme-sticker-bg: #ffeaa7;
-  --chart-line: #1a1a1a;
-  --chart-fill: rgba(255, 51, 68, 0.22);
-}
-
-/* 2. 떡상 모드: 화이트 스케치북 + 볼드 블랙 + 라임/에메랄드/골드 마커 포인트 */
-body.theme-tteoksang {
-  --theme-accent: #059669;
-  --theme-marker: #d1fae5;
-  --theme-light: #f0fdf4;
-  --theme-sticker-bg: #fef08a;
-  --chart-line: #1a1a1a;
-  --chart-fill: rgba(34, 197, 94, 0.22);
-}
-
-/* 3. 기본 리셋 & 스케치북 배경 */
+/* =========================================================
+   1. 기본 리셋 & 폰트 안티앨리어싱 최적화 ('통' 등 복잡한 글자 깨짐 방지)
+   ========================================================= */
 * {
   margin: 0;
   padding: 0;
@@ -142,43 +62,64 @@ body.theme-tteoksang {
   -webkit-tap-highlight-color: transparent;
 }
 
-button, input, select, textarea {
-  font-family: inherit;
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-white);
+  color: var(--text-black);
+  font-family: var(--font-base);
+  font-size: 16.5px;
+  line-height: 1.55;
+  text-align: center;
+
+  /* 폰트 안티앨리어싱 활성화: 복잡한 한글(통, 졸, 업 등) 깨짐 방지 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  text-wrap: balance;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 body {
-  font-family: var(--font-main);
-  background-color: #f4f3ee;
-  /* 손그림 노트/모눈종이 느낌의 미세한 스케치 배경 */
-  background-image: 
-    radial-gradient(#e2dfd2 1.2px, transparent 1.2px),
-    radial-gradient(#e2dfd2 1.2px, #f4f3ee 1.2px);
-  background-size: 24px 24px;
-  background-position: 0 0, 12px 12px;
-  color: var(--ink-black);
-  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px 14px;
+  padding: 24px 16px;
   overflow-x: hidden;
-  transition: background-color 0.3s ease;
+  position: relative;
+  background-color: #ffffff;
+  background-image: none;
 }
 
-/* 4. 스케치북 모바일 앱 프레임 */
+button, input, select, textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* =========================================================
+   2. 메인 모바일 앱 프레임 (코믹북 만화 칸)
+   ========================================================= */
 .app-container {
   width: 100%;
-  max-width: 450px;
-  min-height: 640px;
-  background: var(--paper-white);
+  max-width: 460px;
+  min-height: 660px;
+  background: var(--bg-white);
   border: var(--border-thick);
-  border-radius: 28px;
-  box-shadow: var(--doodle-shadow-lg);
+  box-shadow: var(--shadow-comic-lg);
+  border-radius: 0px; /* 코믹 브루탈리즘 사각 프레임 */
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 1;
 }
 
 /* 화면 전환 */
@@ -186,359 +127,597 @@ body {
   display: none;
   flex-direction: column;
   flex-grow: 1;
-  padding: 30px 22px;
-  opacity: 0;
-  transform: scale(0.99);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  padding: 26px var(--card-padding);
   position: relative;
   z-index: 10;
+  background: var(--bg-white);
 }
 
 .screen.active {
   display: flex;
-  opacity: 1;
-  transform: scale(1);
+  animation: comicPanelPop 0.15s cubic-bezier(0, 0, 0.2, 1);
 }
 
-/* 5. [화면 0] 모드 선택 화면 (인스타툰 표지 스타일) */
-.mode-select-content {
-  margin: auto 0;
+@keyframes comicPanelPop {
+  0% {
+    opacity: 0;
+    transform: translate(2px, 2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+/* =========================================================
+   3. [화면 0] 2000년대 플래시 / 졸라맨 인디 웹게임 테마
+   (정돈된 SaaS 카드 나열을 탈피한 비대칭 한 컷 만화 씬)
+   ========================================================= */
+.screen.screen-flash-title {
+  padding: 18px 18px 22px 18px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  background-color: #ffffff;
+}
+
+/* 삐뚤빼뚤 타임머신 긴급 무전 테이프 (라운드 스퀘어 배너) */
+.flash-warning-tape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--accent-yellow);
+  border: 2.5px solid #000000;
+  box-shadow: none;
+  border-radius: 12px;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #000000;
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  font-weight: bold;
+  transform: rotate(-1.2deg);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.flash-warning-tape:hover {
+  transform: rotate(-1.2deg) scale(1.02);
+  box-shadow: none;
+  background: #ffea2e;
+}
+
+.tape-stripes {
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.tape-msg {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 4px;
+}
+
+.tape-arrow {
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+/* 타이틀 영역 (모든 글씨 중간 배열 & 균형 줄바꿈) */
+.flash-hero-zone {
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-/* 낙서풍 상단 스티커 태그 */
-.brand-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--marker-yellow);
-  border: var(--border-medium);
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  padding: 6px 14px;
-  font-size: 0.88rem;
-  font-weight: 900;
-  color: var(--ink-black);
-  box-shadow: var(--doodle-shadow-sm);
-  margin-bottom: 22px;
-  transform: rotate(-1.5deg);
-}
-
-/* 굵은 마커 타이틀 */
-.hero-title {
-  font-size: 2rem;
-  font-weight: 900;
-  line-height: 1.3;
-  letter-spacing: -0.8px;
-  margin-bottom: 12px;
-  color: var(--ink-black);
-  position: relative;
-}
-
-.hero-desc {
-  font-size: 0.95rem;
-  color: var(--ink-gray);
-  line-height: 1.5;
-  margin-bottom: 32px;
-  font-weight: 600;
-  word-break: keep-all;
-}
-
-/* 모드 선택 카드 (볼드 스케치북 카드) */
-.mode-cards-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  padding: 4px 2px;
+  flex-shrink: 0;
   width: 100%;
 }
 
-.mode-card {
-  position: relative;
-  display: flex;
+.vintage-game-tag {
+  display: inline-flex;
   align-items: center;
-  gap: 16px;
-  padding: 18px 18px;
-  border-radius: 20px;
-  border: var(--border-thick);
-  background: var(--paper-white);
-  box-shadow: var(--doodle-shadow);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-align: left;
-}
-
-.mode-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--ink-black);
-}
-
-.mode-card:active {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0px var(--ink-black);
-}
-
-.mode-card.narak {
+  gap: 6px;
+  background: #000000;
+  color: var(--accent-yellow);
+  border: 1.5px solid #000000;
+  padding: 3px 8px;
+  font-size: 0.82rem;
+  font-weight: bold;
+  font-family: var(--font-base);
+  margin-bottom: 8px;
   transform: rotate(-0.8deg);
-  background: #fffafa;
 }
 
-.mode-card.narak:hover {
-  transform: rotate(-0.8deg) translate(-2px, -2px);
+.tag-blink {
+  color: #ff3344;
+  animation: blinkDot 0.8s infinite alternate;
 }
 
-.mode-card.tteoksang {
-  transform: rotate(0.8deg);
-  background: #f6fdf8;
+@keyframes blinkDot {
+  0% { opacity: 0.2; }
+  100% { opacity: 1; }
 }
 
-.mode-card.tteoksang:hover {
-  transform: rotate(0.8deg) translate(-2px, -2px);
+.flash-hero-title {
+  font-family: var(--font-title);
+  font-size: 1.6rem;
+  font-weight: bold;
+  line-height: 1.35;
+  letter-spacing: -0.6px;
+  color: #000000;
+  margin-bottom: 6px;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-align: center;
+  text-wrap: balance;
 }
 
-.mode-card-icon {
-  font-size: 2.3rem;
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  border: var(--border-medium);
+.ink-marker {
+  background: var(--accent-yellow);
+  padding: 0 4px;
+  border-bottom: 2px solid #000000;
+}
+
+.flash-hero-caption {
+  font-size: 0.86rem;
+  color: #4b4b4b;
+  line-height: 1.4;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* 중앙 졸라맨 캐릭터 스테이지 (추후 GIF/일러스트 확장 가능) */
+.jollaman-stage {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 8px 0;
+  flex-grow: 1;
+  position: relative;
+}
+
+.jollaman-art-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 졸라맨 말풍선 */
+.jollaman-bubble {
+  position: relative;
+  background: #ffffff;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  padding: 6px 12px;
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #000000;
+  transform: rotate(-2deg) translateY(-4px);
+  white-space: nowrap;
+}
+
+.bubble-tail {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid #000000;
+}
+
+.bubble-tail::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: -4px;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #ffffff;
+}
+
+/* 졸라맨 2프레임 미세 지진 애니메이션 (플래시 특유의 손그림 떨림) */
+.jollaman-svg {
+  width: 140px;
+  height: 120px;
+  animation: jollamanShiver 0.18s infinite alternate steps(2);
+  transform-origin: center bottom;
+}
+
+@keyframes jollamanShiver {
+  0% { transform: translateY(0px) rotate(-0.5deg); }
+  100% { transform: translateY(1.5px) rotate(0.8deg); }
+}
+
+/* 하단 운명의 갈림길 (비대칭 2단 게이트 존) */
+.destiny-fork-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
   flex-shrink: 0;
-  background: var(--paper-white);
 }
 
-.mode-card.narak .mode-card-icon {
-  background: #ffe4e6;
-  box-shadow: 2px 2px 0px var(--ink-black);
+.fork-caption-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #000000;
+  letter-spacing: -0.3px;
 }
 
-.mode-card.tteoksang .mode-card-icon {
-  background: #dcfce7;
-  box-shadow: 2px 2px 0px var(--ink-black);
+.fork-blink-arrow {
+  color: #ff3344;
+  animation: arrowBounce 0.4s infinite alternate ease-in-out;
 }
 
-.mode-card-info h3 {
-  font-size: 1.2rem;
-  font-weight: 900;
-  margin-bottom: 3px;
-  color: var(--ink-black);
+@keyframes arrowBounce {
+  0% { transform: translateY(-2px); }
+  100% { transform: translateY(2px); }
 }
 
-.mode-card-info p {
-  font-size: 0.84rem;
-  color: var(--ink-gray);
-  line-height: 1.4;
-  font-weight: 600;
+/* 비대칭 2단 게이트 레이아웃 */
+.destiny-split-doors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
 }
 
-/* 6. [화면 1] 인트로 화면 */
+.destiny-gate {
+  position: relative;
+  min-height: 135px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  border-radius: 0px;
+  transition: transform 0.15s cubic-bezier(0, 0, 0.2, 1), box-shadow 0.15s ease;
+  user-select: none;
+}
+
+.gate-main-info {
+  margin-top: 14px;
+}
+
+/* 1. 나락 게이트 (검은색 사선 벙커 + 지진 덜컹거림) */
+.gate-narak {
+  background: #000000;
+  color: #ffffff;
+  border: 3px solid #000000;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.35);
+  transform: rotate(-1.5deg);
+}
+
+.gate-narak .gate-warning-tape {
+  align-self: flex-start;
+  background: var(--accent-yellow);
+  color: #000000;
+  font-family: var(--font-title);
+  font-size: 0.76rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border: 1px solid #000000;
+  letter-spacing: 0.5px;
+}
+
+.gate-narak .gate-code {
+  font-size: 0.8rem;
+  color: #999999;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.gate-narak .gate-title {
+  font-family: var(--font-title);
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #ffffff;
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+
+.gate-narak .gate-desc {
+  font-size: 0.82rem;
+  color: #ff5252;
+  font-weight: bold;
+}
+
+.gate-narak .gate-stamp {
+  align-self: flex-start;
+  font-size: 0.76rem;
+  color: #ff5252;
+  border: 1px dashed #ff5252;
+  padding: 2px 5px;
+  transform: rotate(-3deg);
+  font-weight: bold;
+}
+
+.gate-narak:hover {
+  transform: rotate(-1.5deg) scale(1.04);
+  box-shadow: 6px 6px 0px #000000;
+  animation: gateRumble 0.12s infinite alternate;
+}
+
+@keyframes gateRumble {
+  0% { transform: rotate(-1.5deg) translate(0px, 0px); }
+  100% { transform: rotate(-1.2deg) translate(1px, -1px); }
+}
+
+.gate-narak:active {
+  transform: rotate(-1.5deg) translate(3px, 3px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+/* 2. 떡상 게이트 (쨍한 옐로우 + 날아오르는 비대칭 각도) */
+.gate-tteoksang {
+  background: var(--accent-yellow);
+  color: #000000;
+  border: 3px solid #000000;
+  box-shadow: 5px 5px 0px #000000;
+  transform: rotate(1.8deg);
+}
+
+.gate-tteoksang .gate-lucky-badge {
+  align-self: flex-start;
+  background: #000000;
+  color: #ffffff;
+  font-family: var(--font-title);
+  font-size: 0.76rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  letter-spacing: 0.5px;
+}
+
+.gate-tteoksang .gate-code {
+  font-size: 0.8rem;
+  color: #4b4b4b;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.gate-tteoksang .gate-title {
+  font-family: var(--font-title);
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #000000;
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+
+.gate-tteoksang .gate-desc {
+  font-size: 0.82rem;
+  color: #000000;
+  font-weight: bold;
+}
+
+.gate-tteoksang .gate-stamp {
+  align-self: flex-start;
+  background: #000000;
+  color: var(--accent-yellow);
+  font-size: 0.76rem;
+  padding: 2px 6px;
+  transform: rotate(3deg);
+  font-weight: bold;
+}
+
+.gate-tteoksang:hover {
+  transform: rotate(1.8deg) translate(-3px, -5px);
+  box-shadow: 8px 8px 0px #000000;
+}
+
+.gate-tteoksang:active {
+  transform: rotate(1.8deg) translate(3px, 3px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+/* =========================================================
+   4. [화면 1] 모드별 인트로 화면
+   ========================================================= */
 .top-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .back-btn {
-  background: var(--paper-white);
-  border: var(--border-medium);
-  border-radius: 12px;
-  box-shadow: var(--doodle-shadow-sm);
-  color: var(--ink-black);
-  font-size: 0.85rem;
-  font-weight: 800;
+  background: var(--bg-white);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-comic-sm);
+  padding: 6px 12px;
+  font-size: 0.92rem;
+  font-weight: bold;
+  font-family: var(--font-base);
+  color: var(--text-black);
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  cursor: pointer;
-  padding: 6px 12px;
-  transition: all 0.15s ease;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .back-btn:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0px var(--ink-black);
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000;
 }
 
-.back-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px var(--ink-black);
+.spec-pill {
+  font-family: var(--font-base);
+  font-size: 0.88rem;
+  font-weight: bold;
+  padding: 4px 10px;
+  background: var(--accent-yellow);
+  border: var(--border-thin);
+  box-shadow: 2px 2px 0px #000000;
+  color: var(--text-black);
 }
 
 .intro-content {
   margin: auto 0;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
 }
 
 .intro-icon {
-  font-size: 4.5rem;
-  margin-bottom: 14px;
+  font-size: 3.5rem;
+  margin-bottom: 16px;
   display: inline-block;
-  filter: drop-shadow(3px 3px 0px rgba(0, 0, 0, 0.9));
-  animation: doodleBounce 2.5s ease-in-out infinite;
-}
-
-@keyframes doodleBounce {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-8px) rotate(3deg); }
+  border: var(--border-thick);
+  background: var(--bg-white);
+  padding: 12px 18px;
+  box-shadow: var(--shadow-comic-sm);
 }
 
 .intro-title {
-  font-size: 2.1rem;
-  font-weight: 900;
-  line-height: 1.3;
-  letter-spacing: -0.7px;
-  margin-bottom: 12px;
+  font-family: var(--font-title);
+  font-size: 1.75rem;
+  font-weight: bold;
+  line-height: 1.35;
+  margin-bottom: 14px;
+  color: var(--text-black);
+  word-break: keep-all;
 }
 
 .intro-title span {
-  display: inline-block;
-  background: var(--marker-yellow);
-  padding: 0 8px;
-  border-radius: 6px;
-  border: 2px solid var(--ink-black);
-  box-shadow: 2px 2px 0px var(--ink-black);
-  transform: rotate(-1deg);
+  background: var(--accent-yellow);
+  padding: 0 4px;
 }
 
 .intro-desc {
-  font-size: 0.95rem;
-  color: var(--ink-gray);
-  line-height: 1.6;
-  margin-bottom: 28px;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: normal;
+  color: var(--text-black);
+  margin-bottom: 22px;
   word-break: keep-all;
 }
 
 .intro-specs {
   display: flex;
-  justify-content: center;
   gap: 8px;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
+  margin-top: 6px;
 }
 
-.spec-pill {
-  font-size: 0.8rem;
-  font-weight: 800;
-  padding: 6px 12px;
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  background: var(--paper-cream);
-  border: var(--border-medium);
-  box-shadow: 2px 2px 0px var(--ink-black);
-  color: var(--ink-black);
-}
-
-/* 7. [화면 2] 7단계 밸런스 게임 화면 */
+/* =========================================================
+   5. [화면 2] 7단계 밸런스 게임 화면 (만화 컷 질문)
+   ========================================================= */
 .game-header {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .game-status-bar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
 }
 
 .step-indicator {
-  font-size: 1rem;
-  font-weight: 900;
-  color: var(--ink-black);
-  background: var(--marker-yellow);
-  padding: 2px 8px;
-  border: var(--border-medium);
-  border-radius: 6px;
-  box-shadow: 2px 2px 0px var(--ink-black);
-  transform: rotate(-2deg);
+  font-family: var(--font-title);
+  font-size: 1.18rem;
+  font-weight: bold;
+  color: var(--text-black);
+  background: var(--accent-yellow);
+  padding: 3px 10px;
+  border: var(--border-thin);
+  box-shadow: none;
+  border-radius: 8px;
 }
 
 .step-counter {
-  font-size: 0.88rem;
-  font-weight: 900;
-  color: var(--ink-black);
+  font-family: var(--font-title);
+  font-size: 1.02rem;
+  font-weight: bold;
+  color: var(--text-black);
 }
 
 .progress-track {
   width: 100%;
-  height: 12px;
-  background: #f1efe7;
-  border: var(--border-medium);
-  border-radius: 20px;
+  height: 14px;
+  background: #ffffff;
+  border: var(--border-thick);
+  box-shadow: none;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 2px 2px 0px var(--ink-black);
+  position: relative;
 }
 
 .progress-fill {
   height: 100%;
   width: 0%;
-  background: var(--theme-accent);
-  border-right: 2px solid var(--ink-black);
-  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--accent-yellow);
+  border-right: 2.5px solid #000000;
+  border-radius: 8px;
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .question-card {
   margin: auto 0;
   display: flex;
   flex-direction: column;
-}
-
-.question-concept {
-  display: inline-block;
-  align-self: flex-start;
-  font-size: 0.82rem;
-  font-weight: 900;
-  padding: 4px 12px;
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  background: var(--paper-cream);
-  color: var(--ink-black);
-  border: var(--border-medium);
-  box-shadow: 2px 2px 0px var(--ink-black);
-  margin-bottom: 16px;
-  transform: rotate(-1deg);
+  border: var(--border-thick);
+  box-shadow: none;
+  border-radius: 18px;
+  padding: var(--card-padding);
+  background: var(--bg-white);
 }
 
 .question-text {
+  font-family: var(--font-title);
   font-size: 1.45rem;
-  font-weight: 900;
-  line-height: 1.4;
-  letter-spacing: -0.5px;
+  font-weight: normal;
+  line-height: 1.45;
   margin-bottom: 24px;
-  color: var(--ink-black);
+  color: var(--text-black);
   word-break: keep-all;
   overflow-wrap: break-word;
-  text-wrap: balance;
   text-align: center;
-  width: 100%;
 }
 
 .options-container {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   width: 100%;
 }
 
-/* 손그림 선택지 버튼 */
+/* A / B 선택지 버튼 (라운드 스퀘어 배너 형태, No Shadow) */
 .option-btn {
-  background: var(--paper-white);
+  background: var(--bg-white);
   border: var(--border-thick);
-  border-radius: 18px;
-  padding: 16px 14px;
+  padding: 16px 16px;
   text-align: center;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  box-shadow: var(--doodle-shadow);
-  color: var(--ink-black);
-  transition: all 0.15s ease;
+  gap: 12px;
+  box-shadow: none;
+  color: var(--text-black);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
   position: relative;
   width: 100%;
+  border-radius: 14px;
 }
 
 .option-btn::after {
@@ -551,30 +730,32 @@ body {
 }
 
 .option-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--ink-black);
-  background: var(--theme-light);
+  transform: none;
+  box-shadow: none;
+  background: #fffde6;
 }
 
 .option-btn:active {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0px var(--ink-black);
+  transform: none;
+  box-shadow: none;
+  background: var(--accent-yellow);
 }
 
 .option-badge {
-  font-size: 1.05rem;
-  font-weight: 900;
+  font-family: var(--font-title);
+  font-size: 1.18rem;
+  font-weight: bold;
   width: 34px;
   height: 34px;
-  border-radius: 10px;
-  background: var(--marker-yellow);
-  color: var(--ink-black);
-  border: var(--border-medium);
+  background: var(--accent-yellow);
+  color: var(--text-black);
+  border: var(--border-thin);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 2px 2px 0px var(--ink-black);
+  box-shadow: none;
 }
 
 .option-content {
@@ -587,84 +768,80 @@ body {
 }
 
 .option-text {
-  font-size: 1rem;
-  font-weight: 800;
-  line-height: 1.5;
-  color: var(--ink-black);
+  font-family: var(--font-base);
+  font-size: 1.14rem;
+  font-weight: normal;
+  line-height: 1.45;
+  color: var(--text-black);
   word-break: keep-all;
   overflow-wrap: break-word;
-  text-wrap: balance;
   text-align: center;
 }
 
-.option-tag {
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: var(--theme-accent);
-}
-
-/* 8. [화면 3] 로딩 연출 (낙서 스피너 & 롤링) */
+/* =========================================================
+   6. [화면 3] 로딩 화면 (만화 컷 연출)
+   ========================================================= */
 .loading-content {
   margin: auto 0;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  border: var(--border-thick);
+  box-shadow: var(--shadow-comic);
+  padding: 32px var(--card-padding);
+  background: var(--bg-white);
+  border-radius: 16px;
 }
 
-.loading-spinner-wrapper {
-  position: relative;
-  width: 96px;
-  height: 96px;
-  margin-bottom: 24px;
+/* 흑백 코믹 테마 비디오 박스 */
+.loading-video-box {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto 20px auto;
+  border: 3px solid #000000;
+  box-shadow: 6px 6px 0px #000000;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 0;
 }
 
-.spinner-ring {
-  position: absolute;
+.loading-video-box video {
   width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 4px dashed var(--ink-black);
-  animation: doodleSpin 2s linear infinite;
-}
-
-.spinner-core {
-  font-size: 2.6rem;
-  animation: pulseEmoji 1s ease-in-out infinite alternate;
-}
-
-@keyframes doodleSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes pulseEmoji {
-  0% { transform: scale(0.9) rotate(-4deg); }
-  100% { transform: scale(1.1) rotate(4deg); }
+  height: auto;
+  max-height: 360px;
+  display: block;
+  object-fit: contain;
+  border-radius: 13px;
 }
 
 .loading-title {
+  font-family: var(--font-title);
   font-size: 1.5rem;
-  font-weight: 900;
-  margin-bottom: 10px;
-  color: var(--ink-black);
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: var(--text-black);
 }
 
 .loading-desc {
-  font-size: 0.92rem;
-  color: var(--ink-gray);
-  font-weight: 600;
+  font-family: var(--font-base);
+  font-size: 1.02rem;
+  color: var(--text-black);
   line-height: 1.5;
+  word-break: keep-all;
 }
 
-/* 9. [화면 4] 결과 화면 (인스타툰 컷 연출) */
+/* =========================================================
+   7. [화면 4] 결과 화면 (코믹 브루탈리즘 만화 컷)
+   ========================================================= */
 .result-screen {
   overflow-y: auto;
   max-height: 85vh;
-  padding-bottom: 20px;
+  padding-bottom: 24px;
   scrollbar-width: thin;
 }
 
@@ -677,96 +854,141 @@ body {
 }
 
 .result-screen::-webkit-scrollbar-thumb {
-  background: var(--ink-black);
-  border-radius: 4px;
+  background: #000000;
+  border-radius: 0px;
 }
 
 .result-header {
   text-align: center;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
+  padding: 16px;
+  border: var(--border-thick);
+  box-shadow: var(--shadow-comic);
+  background: var(--bg-white);
 }
 
+/* 만화 느낌의 왼쪽 상단 나레이션 텍스트 ("2056년 내 인생은... " 그저 까만 글씨) */
 .result-badge {
-  display: inline-flex;
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #000000;
+  font-family: var(--font-title);
+  font-size: 1.15rem;
+  font-weight: bold;
+  padding: 0;
+  margin: 0 0 6px 2px;
+  letter-spacing: -0.3px;
+}
+
+.result-badge #resultBadgeIcon {
+  display: none !important;
+}
+
+.result-badge #resultBadgeText {
+  color: #000000;
+  font-family: var(--font-title);
+  font-weight: bold;
+}
+
+/* 결과 대표 일러스트 이미지 (정사각형, 배경 일체화, 테두리/그림자 없음) */
+.result-image-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 6px;
-  background: var(--marker-yellow);
-  border: var(--border-medium);
-  box-shadow: var(--doodle-shadow-sm);
-  color: var(--ink-black);
-  font-size: 0.88rem;
-  font-weight: 900;
-  padding: 6px 14px;
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  margin-bottom: 12px;
-  transform: rotate(-1deg);
+  margin: 10px auto 14px auto;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.result-image {
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  outline: none;
+}
+
+@media (max-width: 480px) {
+  .result-image {
+    width: 82vw;
+    max-width: 380px;
+  }
 }
 
 .result-title {
-  font-size: 1.75rem;
-  font-weight: 900;
+  font-family: var(--font-title);
+  font-size: 1.65rem;
+  font-weight: bold;
   line-height: 1.35;
-  letter-spacing: -0.6px;
-  margin-bottom: 6px;
-  color: var(--ink-black);
+  margin-bottom: 0;
+  color: var(--text-black);
   word-break: keep-all;
   overflow-wrap: break-word;
-  text-wrap: balance;
   text-align: center;
 }
 
 .result-rank {
-  font-size: 0.88rem;
-  font-weight: 800;
-  color: var(--ink-light);
-  text-align: center;
+  display: none !important;
 }
 
-/* 손그림 낙서 인생 차트 카드 */
+/* =========================================================
+   8. 차트 영역 (그라데이션 제거, 굵은 픽셀 라인, 코믹 프레임)
+   ========================================================= */
 .chart-card {
-  background: var(--paper-white);
+  background: var(--bg-white);
   border: var(--border-thick);
-  border-radius: 22px;
-  padding: 16px;
-  margin-bottom: 18px;
-  box-shadow: var(--doodle-shadow);
+  padding: var(--card-padding);
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-comic);
 }
 
 .chart-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
 
 .chart-title {
-  font-size: 0.95rem;
-  font-weight: 900;
-  color: var(--ink-black);
+  font-family: var(--font-title);
+  font-size: 1.08rem;
+  font-weight: bold;
+  color: var(--text-black);
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
 .chart-trend-rate {
-  font-size: 1.1rem;
-  font-weight: 900;
-  color: var(--theme-accent);
-  background: var(--paper-cream);
+  font-family: var(--font-title);
+  font-size: 1.22rem;
+  font-weight: bold;
+  color: var(--text-black);
+  background: var(--accent-yellow);
   padding: 2px 8px;
-  border: var(--border-medium);
-  border-radius: 8px;
-  box-shadow: 2px 2px 0px var(--ink-black);
+  border: var(--border-thin);
+  box-shadow: 2px 2px 0px #000000;
 }
 
 .chart-canvas-wrapper {
   width: 100%;
-  height: 180px;
+  height: 190px;
   position: relative;
   background: #ffffff;
-  border: var(--border-medium);
-  border-radius: 14px;
+  border: var(--border-thick);
   overflow: hidden;
+  box-shadow: 3px 3px 0px #000000;
 }
 
 #lifeTrendCanvas {
@@ -776,46 +998,50 @@ body {
 }
 
 .chart-footer-caption {
-  margin-top: 8px;
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: var(--ink-light);
+  margin-top: 10px;
+  font-family: var(--font-base);
+  font-size: 0.86rem;
+  font-weight: normal;
+  color: #000000;
   text-align: center;
 }
 
-/* 썰 & 인과관계 카드 (스케치북 메모장 스타일) */
+/* =========================================================
+   9. 썰 & 인과관계 타임라인 카드 (라운드 스퀘어, No Shadow)
+   ========================================================= */
 .story-card {
-  background: var(--paper-cream);
+  background: var(--bg-white);
   border: var(--border-thick);
-  border-radius: 22px;
-  padding: 18px;
-  margin-bottom: 16px;
-  box-shadow: var(--doodle-shadow);
+  border-radius: 18px;
+  padding: var(--card-padding);
+  margin-bottom: 20px;
+  box-shadow: none;
   text-align: center;
 }
 
 .story-card-title {
-  font-size: 0.92rem;
-  font-weight: 900;
-  color: var(--ink-black);
-  margin-bottom: 12px;
+  font-family: var(--font-title);
+  font-size: 1.02rem;
+  font-weight: bold;
+  color: var(--text-black);
+  margin-bottom: 14px;
   display: inline-block;
-  background: var(--marker-yellow);
-  padding: 3px 12px;
-  border: var(--border-medium);
-  border-radius: 6px;
-  transform: rotate(-1deg);
+  background: var(--accent-yellow);
+  padding: 4px 12px;
+  border: var(--border-thin);
+  border-radius: 8px;
+  box-shadow: none;
 }
 
 .story-summary {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--ink-black);
+  font-family: var(--font-title);
+  font-size: 1.14rem;
+  font-weight: normal;
+  color: var(--text-black);
   line-height: 1.6;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   word-break: keep-all;
   overflow-wrap: break-word;
-  text-wrap: balance;
   text-align: center;
 }
 
@@ -823,129 +1049,68 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  border-top: 2px dashed var(--ink-black);
-  padding-top: 14px;
+  border-top: 2px dashed #000000;
+  padding-top: 16px;
   align-items: center;
   text-align: center;
 }
 
 .timeline-item {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--ink-gray);
+  font-family: var(--font-base);
+  font-size: 1.02rem;
+  color: var(--text-black);
   line-height: 1.6;
   word-break: keep-all;
   overflow-wrap: break-word;
-  text-wrap: balance;
-  text-align: center;
-}
-
-/* 팩폭 조언 카드 (말풍선/스티커 스타일) */
-.advice-card {
-  background: #fffbe6;
-  border: var(--border-thick);
-  border-radius: 20px;
-  padding: 16px;
-  margin-bottom: 22px;
-  text-align: center;
-  box-shadow: var(--doodle-shadow);
-  transform: rotate(-0.5deg);
-}
-
-.advice-label {
-  font-size: 0.85rem;
-  font-weight: 900;
-  color: var(--ink-black);
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.advice-text {
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: var(--ink-black);
-  line-height: 1.6;
-  word-break: keep-all;
-  overflow-wrap: break-word;
-  text-wrap: balance;
   text-align: center;
 }
 
 /* =========================================================
-   구글 AI Plus 프로모션 배너 (대문 상단 띠배너 & 결과창 CTA 배너)
-   네오 브루탈리즘 낙서 & 스티커 일체감 디자인
+   10. 조언 & 명언 카드 (라운드 스퀘어, No Shadow)
    ========================================================= */
-
-/* 1. 대문 상단 깔끔한 띠 배너 */
-.top-ticker-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  background: #fffbe6;
-  border: var(--border-medium);
-  border-radius: 14px;
-  padding: 10px 16px;
-  margin-bottom: 20px;
-  box-shadow: var(--doodle-shadow-sm);
-  text-decoration: none;
-  color: var(--ink-black);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+.advice-card {
+  background: #ffffff;
+  border: var(--border-thick);
+  border-radius: 18px;
+  padding: var(--card-padding);
+  margin-bottom: 22px;
+  text-align: center;
+  box-shadow: none;
   position: relative;
-  z-index: 5;
-  flex-shrink: 0;
-  box-sizing: border-box;
 }
 
-.top-ticker-banner:hover {
-  background: var(--marker-yellow);
-  transform: translateY(-2px);
-  box-shadow: 4px 4px 0px var(--ink-black);
-}
-
-.top-ticker-banner:active {
-  transform: translateY(1px);
-  box-shadow: 1px 1px 0px var(--ink-black);
-}
-
-.top-ticker-banner .ticker-text {
-  font-size: 0.9rem;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-  color: var(--ink-black);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.top-ticker-banner .ticker-arrow {
+.advice-label {
+  font-family: var(--font-title);
+  font-size: 0.98rem;
+  font-weight: bold;
+  color: var(--text-black);
+  margin-bottom: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  background: var(--ink-black);
-  color: #ffffff;
-  border-radius: 50%;
-  font-size: 0.8rem;
-  font-weight: 900;
-  flex-shrink: 0;
-  margin-left: 10px;
-  transition: transform 0.15s ease;
+  gap: 6px;
+  background: var(--accent-yellow);
+  padding: 4px 12px;
+  border: var(--border-thin);
+  border-radius: 8px;
+  box-shadow: none;
 }
 
-.top-ticker-banner:hover .ticker-arrow {
-  transform: translateX(3px);
+.advice-text {
+  font-family: var(--font-title);
+  font-size: 1.14rem;
+  font-weight: normal;
+  color: var(--text-black);
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-align: center;
 }
 
-/* 2. 결과창 링크 연결 배너 (CTA) - 스케치북 & 손그림 낙서풍 완벽 일체화 */
+
+/* =========================================================
+   11. 프로모션 배너 (구글 AI Plus)
+   ========================================================= */
 .cta-promo-banner {
   display: flex;
   flex-direction: column;
@@ -953,60 +1118,56 @@ body {
   justify-content: center;
   text-align: center;
   width: 100%;
-  background: #fffbe6;
+  background: var(--bg-white);
   border: var(--border-thick);
-  border-radius: 20px;
-  padding: 22px 18px;
-  margin: 16px 0 22px 0;
-  box-shadow: var(--doodle-shadow);
+  box-shadow: none;
+  border-radius: 16px;
+  padding: var(--card-padding);
+  margin-bottom: 22px;
   text-decoration: none;
-  color: var(--ink-black);
-  position: relative;
-  flex-shrink: 0;
-  box-sizing: border-box;
+  color: var(--text-black);
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  transition: background-color 0.15s ease;
+  position: relative;
+  box-sizing: border-box;
 }
 
 .cta-promo-banner:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--doodle-shadow-lg);
-  background-color: #fff8cc;
+  transform: none;
+  box-shadow: none;
+  background: #fffde6;
 }
 
 .cta-promo-banner:active {
-  transform: translateY(1px);
-  box-shadow: var(--doodle-shadow-hover);
+  transform: none;
+  box-shadow: none;
 }
 
 .cta-promo-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  background: var(--marker-yellow);
-  border: 2px solid var(--ink-black);
-  border-radius: 999px;
-  padding: 5px 14px;
-  font-size: 0.82rem;
-  font-weight: 900;
-  color: var(--ink-black);
-  box-shadow: 2px 2px 0px var(--ink-black);
+  gap: 6px;
+  background: var(--accent-yellow);
+  border: var(--border-thin);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-family: var(--font-title);
+  font-size: 0.88rem;
+  font-weight: bold;
+  color: var(--text-black);
+  box-shadow: none;
   margin-bottom: 12px;
-  letter-spacing: -0.2px;
-  flex-shrink: 0;
 }
 
 .cta-promo-title {
-  font-size: 1.06rem;
-  font-weight: 900;
-  line-height: 1.55;
-  color: var(--ink-black);
+  font-family: var(--font-title);
+  font-size: 1.14rem;
+  font-weight: bold;
+  line-height: 1.5;
+  color: var(--text-black);
   word-break: keep-all;
-  overflow-wrap: break-word;
-  text-wrap: balance;
   text-align: center;
   margin: 0 0 16px 0;
-  padding: 0 8px;
 }
 
 .cta-promo-btn {
@@ -1014,443 +1175,241 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--ink-black);
-  color: #ffffff;
-  font-size: 0.9rem;
-  font-weight: 800;
-  padding: 10px 22px;
-  border-radius: 999px;
-  border: 2px solid var(--ink-black);
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
-  transition: all 0.15s ease;
-  flex-shrink: 0;
+  background: var(--accent-yellow);
+  border: var(--border-thin);
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-family: var(--font-title);
+  font-size: 0.96rem;
+  font-weight: bold;
+  color: var(--text-black);
+  box-shadow: none;
+  transition: background-color 0.15s ease;
 }
 
 .cta-promo-banner:hover .cta-promo-btn {
-  background: var(--marker-yellow);
-  color: var(--ink-black);
+  background: #ffea2e;
 }
 
-.cta-promo-banner:hover .cta-promo-btn svg {
-  transform: translateX(3px);
-}
-
-.cta-promo-btn svg {
-  transition: transform 0.15s ease;
-}
-
-/* 10. 액션 버튼 그룹 (볼드 마커 버튼) */
+/* =========================================================
+   12. 액션 버튼 (CTA Buttons: 배경 #FFE600, 글씨/테두리 #000000)
+   ========================================================= */
 .action-buttons {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   margin-top: auto;
 }
 
 .primary-btn {
-  background: var(--marker-yellow);
-  color: var(--ink-black);
+  background: var(--accent-yellow);
+  color: #000000;
   border: var(--border-thick);
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 16px 20px;
-  font-size: 1.05rem;
-  font-weight: 900;
+  font-family: var(--font-title);
+  font-size: 1.14rem;
+  font-weight: bold;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: var(--doodle-shadow);
-  transition: all 0.15s ease;
+  box-shadow: none;
+  transition: background-color 0.15s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .primary-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--ink-black);
+  transform: none;
+  box-shadow: none;
+  background-color: #ffd700;
 }
 
 .primary-btn:active {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0px var(--ink-black);
+  transform: none;
+  box-shadow: none;
+  background-color: #f5cc00;
 }
 
 .secondary-btn {
-  background: var(--paper-white);
-  color: var(--ink-black);
+  background: #ffffff;
+  color: #000000;
   border: var(--border-thick);
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 14px 18px;
-  font-size: 0.95rem;
-  font-weight: 800;
+  font-family: var(--font-title);
+  font-size: 1.04rem;
+  font-weight: bold;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: var(--doodle-shadow-sm);
-  transition: all 0.15s ease;
+  box-shadow: none;
+  transition: background-color 0.15s ease;
 }
 
 .secondary-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0px var(--ink-black);
+  transform: none;
+  box-shadow: none;
+  background: #fffde6;
 }
 
 .secondary-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px var(--ink-black);
+  transform: none;
+  box-shadow: none;
 }
 
 .ghost-btn {
   background: transparent;
-  color: var(--ink-light);
-  border: none;
-  font-size: 0.88rem;
-  font-weight: 700;
-  padding: 10px;
+  color: #000000;
+  border: 2px dashed #000000;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: var(--font-base);
+  font-size: 0.98rem;
+  font-weight: bold;
   cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  transition: color 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
 }
 
 .ghost-btn:hover {
-  color: var(--ink-black);
+  background: #fffde6;
 }
 
-/* 11. 토스트 알림 */
+/* =========================================================
+   13. 떡락 결과: 거친 만화 망점(Halftone) & 사선 해칭(Hatching) 연출
+   ========================================================= */
+/* 나락 모드 결과 시 앱 컨테이너 및 카드 배경에 은은한 망점/해칭 패턴 부여 */
+body.is-narak-result {
+  background-color: #ffffff;
+  background-image: 
+    radial-gradient(#000000 18%, transparent 19%),
+    radial-gradient(#000000 18%, transparent 19%);
+  background-size: 10px 10px;
+  background-position: 0 0, 5px 5px;
+}
+
+.is-narak-result .result-screen {
+  background-image: 
+    radial-gradient(#000000 8%, transparent 9%);
+  background-size: 12px 12px;
+}
+
+.is-narak-result .result-header {
+  border: var(--border-thick);
+  background: #ffffff;
+  position: relative;
+}
+
+/* 사선 해칭(Hatching) 뱃지 장식 */
+.is-narak-result .result-header::before {
+  content: 'FALL';
+  position: absolute;
+  top: -12px;
+  right: -10px;
+  background: #000000;
+  color: #ffffff;
+  font-family: var(--font-title);
+  font-size: 0.78rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border: 2px solid #000000;
+  box-shadow: 2px 2px 0px #000000;
+  transform: rotate(6deg);
+}
+
+.is-narak-result .chart-card {
+  position: relative;
+}
+
+/* 떡락 결과 카드 내 은은한 사선 해칭(Hatching) 톤 */
+.is-narak-result .story-card {
+  background: #ffffff;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 7px,
+    rgba(0, 0, 0, 0.05) 7px,
+    rgba(0, 0, 0, 0.05) 9px
+  );
+}
+
+.is-narak-result .advice-card {
+  background: #ffffff;
+  background-image: radial-gradient(#000000 7%, transparent 8%);
+  background-size: 8px 8px;
+}
+
+/* =========================================================
+   14. 토스트 메시지 (코믹 말풍선)
+   ========================================================= */
 .toast {
   position: fixed;
-  bottom: 30px;
+  bottom: 28px;
   left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--ink-black);
+  transform: translateX(-50%) translateY(30px);
+  background: #000000;
   color: #ffffff;
-  border: 2px solid #ffffff;
+  border: 3px solid var(--accent-yellow);
+  box-shadow: 4px 4px 0px #000000;
   padding: 12px 20px;
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  font-size: 0.92rem;
-  font-weight: 900;
-  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
+  font-family: var(--font-title);
+  font-size: 1.02rem;
+  font-weight: bold;
+  z-index: 1000;
   opacity: 0;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  pointer-events: none;
+  transition: transform 0.2s cubic-bezier(0, 0, 0.2, 1), opacity 0.2s ease;
+  white-space: nowrap;
 }
 
 .toast.show {
-  opacity: 1;
   transform: translateX(-50%) translateY(0);
+  opacity: 1;
 }
 
-/* 12. 반응형: 웹 환경 (Desktop / Wide Screen) 배율 최적화 */
-@media (min-width: 768px) {
-  body {
-    padding: 40px 20px;
-  }
-
-  .app-container {
-    max-width: 740px;
-    border-radius: 36px;
-    box-shadow: 8px 8px 0px var(--ink-black);
-  }
-
-  .screen {
-    padding: 44px 38px;
-  }
-
-  .hero-title {
-    font-size: 2.5rem;
-    line-height: 1.25;
-    margin-bottom: 16px;
-  }
-
-  .hero-desc {
-    font-size: 1.1rem;
-    margin-bottom: 40px;
-  }
-
-  /* 웹에서는 모드 선택 카드를 가로 2열 그리드로 배치 */
-  .mode-cards-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-
-  .mode-card {
-    padding: 24px 20px;
-    border-radius: 24px;
-    gap: 18px;
-  }
-
-  .mode-card-icon {
-    width: 68px;
-    height: 68px;
-    font-size: 2.8rem;
-    border-radius: 18px;
-  }
-
-  .mode-card-info h3 {
-    font-size: 1.35rem;
-  }
-
-  .intro-title {
-    font-size: 2.6rem;
-    line-height: 1.25;
-    margin-bottom: 16px;
-  }
-
-  .intro-desc {
-    font-size: 1.1rem;
-    margin-bottom: 36px;
-  }
-
-  .question-text {
-    font-size: 1.75rem;
-    line-height: 1.35;
-    margin-bottom: 32px;
-  }
-
-  /* 웹에서는 A/B 선택지를 가로 2열로 나란히 배치 */
-  .options-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-
-  .option-btn {
-    min-height: 130px;
-    padding: 22px 20px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-    text-align: center;
-  }
-
-  .option-btn::after {
-    display: none;
-  }
-
-  .option-text {
-    font-size: 1.1rem;
-    line-height: 1.5;
-  }
-
-  .chart-canvas-wrapper {
-    height: 230px;
-  }
-
-  .story-card, .advice-card {
-    padding: 24px;
-  }
-
-  .story-summary {
-    font-size: 1.1rem;
-  }
-
-  .timeline-item {
-    font-size: 0.98rem;
-  }
-
-  .advice-text {
-    font-size: 1.05rem;
-  }
-
-  /* 결과 버튼 웹 2열 배치 */
-  .action-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  .ghost-btn {
-    grid-column: span 2;
-    font-size: 0.95rem;
-    padding: 12px;
-  }
-}
-
-/* 13. 반응형: 모바일 환경 (9:16 비율 및 100dvh 풀스크린) 최적화 */
+/* =========================================================
+   15. 미디어 쿼리 (반응형 최적화)
+   ========================================================= */
 @media (max-width: 480px) {
-  body {
-    padding: 0;
-    margin: 0;
-    align-items: stretch;
-    min-height: 100dvh;
-    height: 100dvh;
-    overflow: hidden;
+  html, body {
+    font-size: 16px;
   }
-  
+
+  body {
+    padding: 10px 8px;
+  }
+
   .app-container {
     max-width: 100%;
-    width: 100%;
-    height: 100dvh;
-    min-height: 100dvh;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
-    display: flex;
-    flex-direction: column;
+    min-height: 100vh;
+    box-shadow: 4px 4px 0px #000000;
   }
-  
+
   .screen {
-    padding: 24px 20px;
-    height: 100dvh;
-    justify-content: space-between;
-    overflow-y: auto;
+    padding: 20px 16px;
   }
 
-  .result-screen {
-    height: 100dvh;
-    max-height: 100dvh;
-    padding: 24px 20px 36px;
-    justify-content: flex-start;
-  }
-  
-  .hero-title {
-    font-size: 1.75rem;
-  }
-  
-  .hero-desc {
-    font-size: 0.92rem;
-    margin-bottom: 24px;
+  :root {
+    --card-padding: 18px;
   }
 
-  .mode-cards-grid {
-    gap: 14px;
+  .hero-title,
+  .flash-hero-title {
+    font-size: 1.55rem;
   }
 
-  .mode-card {
-    padding: 16px 16px;
-  }
-
-  .intro-title {
-    font-size: 1.85rem;
-  }
-
-  .question-text {
-    font-size: 1.28rem;
-    line-height: 1.38;
-    margin-bottom: 20px;
-  }
-
-  .option-btn {
-    padding: 14px 10px;
-    gap: 8px;
-  }
-
-  .option-badge {
-    width: 28px;
-    height: 28px;
-    font-size: 0.85rem;
-    border-radius: 8px;
-  }
-
-  .option-btn::after {
-    width: 28px;
-    height: 28px;
-  }
-
-  .option-text {
-    font-size: 0.9rem;
-    line-height: 1.4;
-    text-align: center;
-    word-break: keep-all;
-    overflow-wrap: break-word;
+  .result-title {
+    font-size: 1.55rem;
   }
 
   .chart-canvas-wrapper {
     height: 170px;
-  }
-
-  /* 모바일 결과창 가운데 정렬 최적화 */
-  .result-title {
-    font-size: 1.45rem;
-    line-height: 1.35;
-    text-align: center;
-  }
-
-  .story-card {
-    text-align: center;
-    padding: 18px 14px;
-  }
-
-  .story-card-title {
-    margin: 0 auto 12px;
-  }
-
-  .story-summary {
-    text-align: center;
-    font-size: 0.95rem;
-  }
-
-  .story-timeline {
-    text-align: center;
-    align-items: center;
-  }
-
-  .timeline-item {
-    text-align: center;
-    font-size: 0.86rem;
-  }
-
-  .advice-card {
-    text-align: center;
-    padding: 15px 14px;
-  }
-
-  .advice-label {
-    justify-content: center;
-  }
-
-  .advice-text {
-    text-align: center;
-    font-size: 0.92rem;
-  }
-
-  /* 모바일 배너 최적화 */
-  .top-ticker-banner {
-    padding: 8px 12px;
-    margin-bottom: 16px;
-    border-radius: 10px;
-  }
-
-  .top-ticker-banner .ticker-text {
-    font-size: 0.82rem;
-  }
-
-  .top-ticker-banner .ticker-arrow {
-    width: 22px;
-    height: 22px;
-    font-size: 0.75rem;
-    margin-left: 6px;
-  }
-
-  .cta-promo-banner {
-    padding: 18px 14px;
-    margin: 12px 0 18px 0;
-    border-radius: 16px;
-    flex-shrink: 0;
-  }
-
-  .cta-promo-badge {
-    padding: 4px 12px;
-    font-size: 0.78rem;
-    margin-bottom: 10px;
-  }
-
-  .cta-promo-title {
-    font-size: 0.98rem;
-    line-height: 1.45;
-    margin-bottom: 12px;
-  }
-
-  .cta-promo-btn {
-    font-size: 0.84rem;
-    padding: 8px 18px;
   }
 }

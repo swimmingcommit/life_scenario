@@ -12,11 +12,12 @@
   <meta property="og:description" content="사소한 일상이 만드는 끔찍한 나비효과 📉 내 인생 그래프를 확인해보세요!">
   <meta property="og:type" content="website">
 
-  <!-- 웹폰트: Pretendard -->
+  <!-- 웹폰트: 갈무리(Galmuri) & Pretendard -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri/dist/galmuri.css">
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
   
   <!-- 스타일시트 -->
-  <link rel="stylesheet" href="style.css?v=20260905_8">
+  <link rel="stylesheet" href="style.css?v=20260923_norank">
 </head>
 <body class="theme-narak">
 
@@ -26,42 +27,97 @@
     <!-- ==========================================
          0. 모드 선택 화면 (나락 vs 떡상)
          ========================================== -->
-    <section id="screenModeSelect" class="screen active">
-      <!-- 대문창 상단 띠 배너 -->
-      <a href="https://goo.gle/koreaseoul" target="_blank" rel="noopener noreferrer" class="top-ticker-banner" id="homeTopBanner">
-        <span class="ticker-text">🚨 대학생 인생 치트키: 구글 AI Plus 혜택 확인</span>
-        <span class="ticker-arrow">➔</span>
+    <!-- ==========================================
+         0. 모드 선택 화면 (비대칭 게이트 & 졸라맨 UI + 이전 텍스트 복원)
+         ========================================== -->
+    <section id="screenModeSelect" class="screen active screen-flash-title">
+      <!-- 삐뚤빼뚤 상단 띠배너 (이전 텍스트 복원) -->
+      <a href="https://goo.gle/koreaseoul" target="_blank" rel="noopener noreferrer" class="flash-warning-tape" id="homeTopBanner">
+        <span class="tape-stripes">🚨</span>
+        <span class="tape-msg">대학생 인생 치트키: 구글 AI Plus 혜택 확인</span>
+        <span class="tape-arrow">➔</span>
       </a>
 
-      <div class="mode-select-content">
-        <div class="brand-badge">
+      <!-- 비대칭 타이틀 영역 (이전 텍스트 복원) -->
+      <div class="flash-hero-zone">
+        <div class="vintage-game-tag">
           <span>⚡</span>
           <span>내 인생 예고편</span>
         </div>
         
-        <h1 class="hero-title">
-          오늘 나의 사소한 선택,<br>떡상일까? 나락일까?
+        <h1 class="flash-hero-title">
+          오늘 나의 사소한 선택,<br>
+          <span class="ink-marker">떡상일까? 나락일까?</span>
         </h1>
-        
-        <p class="hero-desc">
-          순간의 선택이 평생을 좌우한다.<br>
-          당신의 30년 뒤 인생은?
+        <p class="flash-hero-caption">
+          순간의 선택이 평생을 좌우한다.<br>당신의 30년 뒤 인생은?
         </p>
+      </div>
 
-        <div class="mode-cards-grid">
-          <!-- 나락 모드 버튼 -->
-          <div class="mode-card narak" id="btnModeNarak" onclick="selectMode('narak')" role="button" tabindex="0">
-            <div class="mode-card-icon">📉</div>
-            <div class="mode-card-info">
-              <h3>인생 나락 시나리오</h3>
+      <!-- 중앙 졸라맨 캐릭터 스테이지 -->
+      <div class="jollaman-stage" id="characterStage">
+        <div class="jollaman-art-wrapper">
+          <!-- 말풍선 -->
+          <div class="jollaman-bubble">
+            <span>순간의 선택이 평생을 좌우한다!</span>
+            <div class="bubble-tail"></div>
+          </div>
+
+          <!-- 2000년대 감성 엽기 손그림 졸라맨 SVG -->
+          <svg class="jollaman-svg" viewBox="0 0 160 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- 땀방울 -->
+            <path d="M42 28 C42 28 36 38 42 42 C48 42 48 36 42 28 Z" fill="#FFE600" stroke="#000" stroke-width="2"/>
+            <path d="M118 32 C118 32 112 40 118 44 C122 44 122 38 118 32 Z" fill="#FFE600" stroke="#000" stroke-width="2"/>
+            
+            <!-- 머리 -->
+            <circle cx="80" cy="40" r="24" fill="#FFFFFF" stroke="#000000" stroke-width="3.5"/>
+            <!-- 찡그린 눈/동공 -->
+            <circle cx="72" cy="36" r="3" fill="#000000"/>
+            <circle cx="88" cy="36" r="3" fill="#000000"/>
+            <!-- 바들바들 떠는 입 -->
+            <path d="M70 48 Q76 44 80 50 Q86 44 92 48" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
+            
+            <!-- 몸통 -->
+            <line x1="80" y1="64" x2="80" y2="105" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
+            
+            <!-- 팔: 왼쪽은 삿대질, 오른쪽은 머리 쥐어뜯기 -->
+            <path d="M80 75 L52 68 L28 76" stroke="#000000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M80 75 L108 62 L104 40" stroke="#000000" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            
+            <!-- 다리 -->
+            <path d="M80 105 L60 132" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
+            <path d="M80 105 L100 132" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
+
+            <!-- 바닥 그림자 낙서 -->
+            <ellipse cx="80" cy="135" rx="36" ry="4" fill="#000000" opacity="0.2"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 하단 운명의 갈림길 (비대칭 분할 게이트) -->
+      <div class="destiny-fork-zone">
+        <div class="fork-caption-banner">
+          <span class="fork-blink-arrow">▼</span>
+          <span class="fork-lead-text">운명의 갈림길을 선택하라</span>
+          <span class="fork-blink-arrow">▼</span>
+        </div>
+
+        <div class="destiny-split-doors">
+          <!-- 좌측/나락 게이트: 검은색 솔리드 + 경고 사선 벙커 스타일 -->
+          <div class="destiny-gate gate-narak" id="btnModeNarak" onclick="selectMode('narak')" role="button" tabindex="0">
+            <div class="gate-warning-tape">WARNING</div>
+            <div class="gate-main-info">
+              <span class="gate-code">GATE 01</span>
+              <h2 class="gate-title">인생 나락<br>시나리오</h2>
             </div>
           </div>
 
-          <!-- 떡상 모드 버튼 -->
-          <div class="mode-card tteoksang" id="btnModeTteoksang" onclick="selectMode('tteoksang')" role="button" tabindex="0">
-            <div class="mode-card-icon">📈</div>
-            <div class="mode-card-info">
-              <h3>인생 떡상 시나리오</h3>
+          <!-- 우측/떡상 게이트: 쨍한 옐로우 + 치켜올라간 아케이드 스타일 -->
+          <div class="destiny-gate gate-tteoksang" id="btnModeTteoksang" onclick="selectMode('tteoksang')" role="button" tabindex="0">
+            <div class="gate-lucky-badge">CHANCE</div>
+            <div class="gate-main-info">
+              <span class="gate-code">GATE 02</span>
+              <h2 class="gate-title">인생 떡상<br>시나리오</h2>
             </div>
           </div>
         </div>
@@ -145,12 +201,11 @@
          ========================================== -->
     <section id="screenLoading" class="screen">
       <div class="loading-content">
-        <div class="loading-spinner-wrapper">
-          <div class="spinner-ring"></div>
-          <div class="spinner-core" id="loadingSpinnerIcon">💀</div>
+        <div class="loading-video-box">
+          <video id="loadingVideo" src="life_loading.mp4" autoplay playsinline preload="auto"></video>
         </div>
-        <h2 class="loading-title" id="loadingTitle">업보 스노우볼 굴러가는 중...</h2>
-        <p class="loading-desc" id="loadingDesc">사소한 나비효과의 파국 시나리오를 집계하고 있습니다.</p>
+        <h2 class="loading-title" id="loadingTitle">선택의 스노우볼 굴리는 중...</h2>
+        <p class="loading-desc" id="loadingDesc">사소하게 골랐지만 결과는 사소하지 않을 예정입니다.</p>
       </div>
     </section>
 
@@ -161,28 +216,14 @@
       <!-- 헤더 & 등급 -->
       <div class="result-header">
         <div class="result-badge" id="resultBadge">
-          <span id="resultBadgeIcon">💀</span>
-          <span id="resultBadgeText">최종 나락 트리 완료</span>
+          <span id="resultBadgeText">2056년 내 인생은... </span>
+        </div>
+        <div class="result-image-wrapper" id="resultImageWrapper">
+          <img id="resultImage" class="result-image" src="" alt="결과 이미지" onerror="this.style.display='none';">
         </div>
         <h2 class="result-title" id="resultTitle">결과 타이틀</h2>
-        <p class="result-rank" id="resultRank">등급 및 유형</p>
       </div>
 
-      <!-- 인생 주식/롤러코스터 그래프 카드 -->
-      <div class="chart-card">
-        <div class="chart-header">
-          <div class="chart-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
-            <span id="chartTitle">인생 우하향 급락 궤적</span>
-          </div>
-          <span class="chart-trend-rate" id="chartTrendRate">-88%</span>
-        </div>
-        
-        <div class="chart-canvas-wrapper">
-          <canvas id="lifeTrendCanvas"></canvas>
-        </div>
-        <p class="chart-footer-caption">※ 7가지 선택에 따른 내 인생 굴곡 시뮬레이션</p>
-      </div>
 
       <!-- 썰 & 인과관계 타임라인 카드 -->
       <div class="story-card">
@@ -201,8 +242,8 @@
 
       <!-- 구글 AI Plus 링크 연결 배너 -->
       <a href="https://goo.gle/koreaseoul" target="_blank" rel="noopener noreferrer" class="cta-promo-banner" id="resultCtaBanner">
-        <div class="cta-promo-badge" id="resultCtaBadge">🛟 나락 방지 치트키</div>
-        <p class="cta-promo-title" id="resultCtaTitle">인생 나락 막고 싶다면?<br>구글 AI Plus 무료 혜택으로 갓생 시작하기</p>
+        <div class="cta-promo-badge" id="resultCtaBadge">🛟 나락 탈출 치트키</div>
+        <p class="cta-promo-title" id="resultCtaTitle">이대로 나락 갈 순 없다면?<br>구글 AI Plus 무료 혜택으로 갓생 시동 걸기</p>
         <div class="cta-promo-btn">
           <span>구글 AI Plus 혜택 받으러 가기</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
@@ -241,7 +282,7 @@
   <div class="toast" id="toast">알림 메시지</div>
 
   <!-- 스크립트 로드 (브라우저 캐시 방지 쿼리스트링 적용) -->
-  <script src="data.js?v=20260905_10"></script>
-  <script src="script.js?v=20260905_10"></script>
+  <script src="data.js?v=20260923_loading"></script>
+  <script src="script.js?v=20260923_loading"></script>
 </body>
 </html>
